@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Users, School, BarChart3, Settings, UserPlus, BookOpen } from 'lucide-react';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, collection, addDoc, getDocs, doc, setDoc } from 'firebase/firestore';
-import { firebaseApp, firebaseConfig } from '../firebase';
+import { firebaseApp, firebaseConfig, auth, db } from '../firebase';
 import { StudentRegistration } from './StudentRegistration';
 
 export const SuperadminDashboard = () => {
@@ -14,9 +14,6 @@ export const SuperadminDashboard = () => {
     { id: 1, name: 'Sarah Jenkins', email: 'sarah.j@pace.edu', subject: 'Mathematics', status: 'Active' },
     { id: 2, name: 'Marcus Cole', email: 'marcus.c@pace.edu', subject: 'History', status: 'Active' },
   ]);
-
-  const db = getFirestore(firebaseApp);
-  const auth = getAuth(firebaseApp);
 
   const handleInviteTeacher = async (e) => {
     e.preventDefault();

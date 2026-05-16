@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Users, Lock, Mail, UserPlus, LogIn, School, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import logo from '../assets/logo.png';
 
 export const Auth = () => {
   const { login, register, user, loginWithGoogle } = useAuth();
@@ -64,27 +65,88 @@ export const Auth = () => {
   }
 
   return (
-    <div className="main-content" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: 'var(--color-bg)', padding: '2rem' }}>
-      <div className="card" style={{ width: '100%', maxWidth: '450px', padding: '0', overflow: 'hidden' }}>
+    <div className="main-content" style={{ 
+      display: 'flex', 
+      flexDirection: 'column',
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      minHeight: '100vh', 
+      background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 50%, var(--color-secondary) 100%)', 
+      padding: '2rem',
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
+      {/* Decorative background elements */}
+      <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '400px', height: '400px', background: 'var(--color-secondary)', borderRadius: '50%', filter: 'blur(100px)', opacity: 0.15 }}></div>
+      <div style={{ position: 'absolute', bottom: '-10%', left: '-10%', width: '400px', height: '400px', background: 'var(--color-accent)', borderRadius: '50%', filter: 'blur(100px)', opacity: 0.1 }}></div>
+
+      <div className="card" style={{ 
+        width: '100%', 
+        maxWidth: '480px', 
+        padding: '0', 
+        overflow: 'hidden', 
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(10px)',
+        background: 'rgba(255, 255, 255, 0.95)',
+        boxShadow: 'var(--shadow-premium)',
+        zIndex: 1
+      }}>
         
+        {/* Branding Header */}
+        <div style={{ 
+          padding: '2.5rem 2.5rem 1.5rem', 
+          textAlign: 'center', 
+          background: 'var(--color-surface)',
+          borderBottom: '1px solid var(--color-border)'
+        }}>
+          <div style={{ 
+            width: '80px', 
+            height: '80px', 
+            margin: '0 auto 1.5rem', 
+            background: 'white',
+            borderRadius: '20px',
+            padding: '12px',
+            boxShadow: '0 10px 20px rgba(0,0,0,0.05)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <img src={logo} alt="PACE Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          </div>
+          <h1 style={{ 
+            fontSize: '2.5rem', 
+            fontWeight: '800', 
+            margin: '0', 
+            background: 'var(--gradient-brand)', 
+            WebkitBackgroundClip: 'text', 
+            WebkitTextFillColor: 'transparent',
+            letterSpacing: '-0.04em'
+          }}>
+            PACE
+          </h1>
+          <p style={{ color: 'var(--color-text-secondary)', fontSize: '1rem', marginTop: '0.5rem', fontWeight: '500' }}>
+            Academic Progress Tracker
+          </p>
+        </div>
+
         {/* Tabs */}
-        <div style={{ display: 'flex', borderBottom: '1px solid var(--color-border)' }}>
+        <div style={{ display: 'flex', background: 'var(--color-background)' }}>
           <button 
             onClick={() => { setIsLogin(true); setError(''); }}
             style={{ 
               flex: 1, 
-              padding: '1.25rem', 
-              background: isLogin ? 'transparent' : 'var(--color-surface)',
-              borderBottom: isLogin ? '2px solid var(--color-primary)' : '2px solid transparent',
-              color: isLogin ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-              fontWeight: isLogin ? '600' : '500',
+              padding: '1rem', 
+              background: isLogin ? 'var(--color-surface)' : 'transparent',
+              borderBottom: isLogin ? '3px solid var(--color-secondary)' : '3px solid transparent',
+              color: isLogin ? 'var(--color-primary)' : 'var(--color-text-muted)',
+              fontWeight: '700',
               border: 'none',
               cursor: 'pointer',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
               gap: '0.5rem',
-              transition: 'all 0.2s ease'
+              transition: 'all 0.3s ease'
             }}
           >
             <LogIn size={18} /> Sign In
@@ -93,18 +155,18 @@ export const Auth = () => {
             onClick={() => { setIsLogin(false); setError(''); }}
             style={{ 
               flex: 1, 
-              padding: '1.25rem', 
-              background: !isLogin ? 'transparent' : 'var(--color-surface)',
-              borderBottom: !isLogin ? '2px solid var(--color-primary)' : '2px solid transparent',
-              color: !isLogin ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-              fontWeight: !isLogin ? '600' : '500',
+              padding: '1rem', 
+              background: !isLogin ? 'var(--color-surface)' : 'transparent',
+              borderBottom: !isLogin ? '3px solid var(--color-secondary)' : '3px solid transparent',
+              color: !isLogin ? 'var(--color-primary)' : 'var(--color-text-muted)',
+              fontWeight: '700',
               border: 'none',
               cursor: 'pointer',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
               gap: '0.5rem',
-              transition: 'all 0.2s ease'
+              transition: 'all 0.3s ease'
             }}
           >
             <UserPlus size={18} /> Register
@@ -113,12 +175,9 @@ export const Auth = () => {
 
         <div style={{ padding: '2.5rem' }}>
           <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <h1 style={{ color: 'var(--color-primary)', fontSize: '1.75rem', marginBottom: '0.5rem' }}>
+            <h2 style={{ fontSize: '1.5rem', color: 'var(--color-primary)' }}>
               {isLogin ? 'Welcome Back' : 'Create an Account'}
-            </h1>
-            <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
-              {isLogin ? 'Enter your credentials to access your dashboard' : 'Join PACE to manage your educational institution'}
-            </p>
+            </h2>
           </div>
 
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -127,37 +186,31 @@ export const Auth = () => {
               <>
                 <div style={{ display: 'flex', gap: '1rem' }}>
                   <div style={{ flex: 1 }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: '500', fontSize: '0.875rem' }}>
-                      First Name
-                    </label>
+                    <label className="form-label">First Name</label>
                     <input
                       type="text"
                       required
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       className="form-input"
-                      style={{ width: '100%' }}
                       placeholder="John"
                     />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: '500', fontSize: '0.875rem' }}>
-                      Last Name
-                    </label>
+                    <label className="form-label">Last Name</label>
                     <input
                       type="text"
                       required
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                       className="form-input"
-                      style={{ width: '100%' }}
                       placeholder="Doe"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: '500', fontSize: '0.875rem' }}>
+                  <label className="form-label">
                     <Users size={16} /> Account Type
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
@@ -165,38 +218,38 @@ export const Auth = () => {
                       onClick={() => setSelectedRole('superadmin')}
                       style={{
                         padding: '1rem',
-                        border: `1.5px solid ${selectedRole === 'superadmin' ? 'var(--color-primary)' : 'var(--color-border)'}`,
-                        borderRadius: '0.5rem',
+                        border: `2px solid ${selectedRole === 'superadmin' ? 'var(--color-secondary)' : 'var(--color-border)'}`,
+                        borderRadius: 'var(--radius-md)',
                         cursor: 'pointer',
                         textAlign: 'center',
-                        background: selectedRole === 'superadmin' ? 'rgba(37, 99, 235, 0.05)' : 'transparent',
+                        background: selectedRole === 'superadmin' ? 'rgba(0, 209, 193, 0.05)' : 'transparent',
                         transition: 'all 0.2s ease'
                       }}
                     >
-                      <School size={24} color={selectedRole === 'superadmin' ? 'var(--color-primary)' : 'var(--color-text-secondary)'} style={{ margin: '0 auto 0.5rem' }} />
-                      <div style={{ fontWeight: '600', color: selectedRole === 'superadmin' ? 'var(--color-primary)' : 'var(--color-text)' }}>School Admin</div>
+                      <School size={24} color={selectedRole === 'superadmin' ? 'var(--color-secondary)' : 'var(--color-text-muted)'} style={{ margin: '0 auto 0.5rem' }} />
+                      <div style={{ fontWeight: '700', color: selectedRole === 'superadmin' ? 'var(--color-primary)' : 'var(--color-text-main)' }}>School Admin</div>
                     </div>
                     <div 
                       onClick={() => setSelectedRole('teacher')}
                       style={{
                         padding: '1rem',
-                        border: `1.5px solid ${selectedRole === 'teacher' ? 'var(--color-primary)' : 'var(--color-border)'}`,
-                        borderRadius: '0.5rem',
+                        border: `2px solid ${selectedRole === 'teacher' ? 'var(--color-secondary)' : 'var(--color-border)'}`,
+                        borderRadius: 'var(--radius-md)',
                         cursor: 'pointer',
                         textAlign: 'center',
-                        background: selectedRole === 'teacher' ? 'rgba(37, 99, 235, 0.05)' : 'transparent',
+                        background: selectedRole === 'teacher' ? 'rgba(0, 209, 193, 0.05)' : 'transparent',
                         transition: 'all 0.2s ease'
                       }}
                     >
-                      <BookOpen size={24} color={selectedRole === 'teacher' ? 'var(--color-primary)' : 'var(--color-text-secondary)'} style={{ margin: '0 auto 0.5rem' }} />
-                      <div style={{ fontWeight: '600', color: selectedRole === 'teacher' ? 'var(--color-primary)' : 'var(--color-text)' }}>Teacher</div>
+                      <BookOpen size={24} color={selectedRole === 'teacher' ? 'var(--color-secondary)' : 'var(--color-text-muted)'} style={{ margin: '0 auto 0.5rem' }} />
+                      <div style={{ fontWeight: '700', color: selectedRole === 'teacher' ? 'var(--color-primary)' : 'var(--color-text-main)' }}>Teacher</div>
                     </div>
                   </div>
                 </div>
 
                 {selectedRole === 'superadmin' && (
                   <div>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: '500', fontSize: '0.875rem' }}>
+                    <label className="form-label">
                       <School size={16} /> School Name
                     </label>
                     <input
@@ -205,7 +258,6 @@ export const Auth = () => {
                       value={schoolName}
                       onChange={(e) => setSchoolName(e.target.value)}
                       className="form-input"
-                      style={{ width: '100%' }}
                       placeholder="Springfield High School"
                     />
                   </div>
@@ -214,7 +266,7 @@ export const Auth = () => {
             )}
 
             <div>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: '500', fontSize: '0.875rem' }}>
+              <label className="form-label">
                 <Mail size={16} /> Email Address
               </label>
               <input
@@ -223,13 +275,12 @@ export const Auth = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="form-input"
-                style={{ width: '100%' }}
                 placeholder="you@example.com"
               />
             </div>
 
             <div>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: '500', fontSize: '0.875rem' }}>
+              <label className="form-label">
                 <Lock size={16} /> Password
               </label>
               <input
@@ -238,7 +289,6 @@ export const Auth = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="form-input"
-                style={{ width: '100%' }}
                 placeholder="••••••••"
               />
             </div>
@@ -248,9 +298,10 @@ export const Auth = () => {
                 padding: '0.75rem', 
                 background: 'rgba(239, 68, 68, 0.1)', 
                 color: 'var(--color-status-red)', 
-                borderRadius: '0.375rem',
+                borderRadius: 'var(--radius-md)',
                 fontSize: '0.875rem',
-                borderLeft: '3px solid var(--color-status-red)'
+                borderLeft: '4px solid var(--color-status-red)',
+                fontWeight: '500'
               }}>
                 {error}
               </div>
@@ -259,7 +310,15 @@ export const Auth = () => {
             <button 
               type="submit" 
               className="btn btn-primary" 
-              style={{ width: '100%', marginTop: '0.5rem', padding: '0.875rem', fontSize: '1rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
+              style={{ 
+                width: '100%', 
+                marginTop: '1rem', 
+                padding: '1rem', 
+                fontSize: '1.1rem', 
+                background: 'var(--gradient-brand)',
+                boxShadow: '0 4px 15px rgba(0, 209, 193, 0.3)',
+                borderRadius: 'var(--radius-md)'
+              }}
               disabled={loading}
             >
               {loading ? (

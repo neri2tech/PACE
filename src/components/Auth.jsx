@@ -130,15 +130,21 @@ const navigate = useNavigate();
         position: 'relative',
         overflow: 'hidden'
       }}>
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: `url(${authBg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          transform: 'scale(1.05)',
-          filter: 'brightness(0.7)'
-        }} />
+        {/* Animated Background Slideshow */}
+        {backgrounds.map((bg, idx) => (
+          <div key={idx} style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: `url(${bg})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            transform: 'scale(1.05)',
+            filter: 'brightness(0.7)',
+            opacity: currentBg === idx ? 1 : 0,
+            transition: 'opacity 1.5s ease-in-out',
+            zIndex: 0
+          }} />
+        ))}
         
         {/* Deep Gradient Overlay */}
         <div style={{

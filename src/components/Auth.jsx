@@ -100,31 +100,38 @@ export const Auth = () => {
           borderBottom: '1px solid var(--color-border)'
         }}>
           <div style={{ 
-            width: '80px', 
-            height: '80px', 
-            margin: '0 auto 1.5rem', 
-            background: 'white',
-            borderRadius: '20px',
-            padding: '12px',
-            boxShadow: '0 10px 20px rgba(0,0,0,0.05)',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            gap: '1rem',
+            marginBottom: '0.5rem'
           }}>
-            <img src={logo} alt="PACE Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <div style={{ 
+              width: '56px', 
+              height: '56px', 
+              background: 'white',
+              borderRadius: '14px',
+              padding: '8px',
+              boxShadow: '0 8px 16px rgba(0,0,0,0.05)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <img src={logo} alt="PACE Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            </div>
+            <h1 style={{ 
+              fontSize: '2.75rem', 
+              fontWeight: '800', 
+              margin: '0', 
+              background: 'var(--gradient-brand)', 
+              WebkitBackgroundClip: 'text', 
+              WebkitTextFillColor: 'transparent',
+              letterSpacing: '-0.04em'
+            }}>
+              PACE
+            </h1>
           </div>
-          <h1 style={{ 
-            fontSize: '2.5rem', 
-            fontWeight: '800', 
-            margin: '0', 
-            background: 'var(--gradient-brand)', 
-            WebkitBackgroundClip: 'text', 
-            WebkitTextFillColor: 'transparent',
-            letterSpacing: '-0.04em'
-          }}>
-            PACE
-          </h1>
-          <p style={{ color: 'var(--color-text-secondary)', fontSize: '1rem', marginTop: '0.5rem', fontWeight: '500' }}>
+          <p style={{ color: 'var(--color-text-secondary)', fontSize: '1rem', fontWeight: '500' }}>
             Academic Progress Tracker
           </p>
         </div>

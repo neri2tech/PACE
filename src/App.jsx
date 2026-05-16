@@ -49,13 +49,8 @@ function App() {
               </PrivateRoute>
             }
           />
-          {/* Default – redirect based on role if logged in */}
-          <Route
-            path="/"
-            element={
-              <RequireAuthRedirect />
-            }
-          />
+          {/* Catch-all redirect to login or dashboard */}
+          <Route path="*" element={<RequireAuthRedirect />} />
         </Routes>
       </Router>
     </AuthProvider>

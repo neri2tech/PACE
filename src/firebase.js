@@ -1,7 +1,7 @@
 // src/firebase.js
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { initializeFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
@@ -18,5 +18,11 @@ export const firebaseConfig = {
 // Initialize Firebase
 export const firebaseApp = initializeApp(firebaseConfig);
 export const auth = getAuth(firebaseApp);
-export const db = getFirestore(firebaseApp);
+
+// Initialize Firestore with settings to bypass connection blocks
+export const db = initializeFirestore(firebaseApp, {
+  experimentalForceLongPolling: true,
+  useFetchStreams: false
+});
+
 export const storage = getStorage(firebaseApp);

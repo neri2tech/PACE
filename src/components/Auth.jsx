@@ -18,8 +18,7 @@ export const Auth = () => {
   const [selectedRole, setSelectedRole] = useState('superadmin');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+const navigate = useNavigate();
 
   // Handle Remember Me on mount
   useEffect(() => {
@@ -30,18 +29,39 @@ export const Auth = () => {
     }
   }, []);
 
+  const getFriendlyErrorMessage = (error) => {
+    const code = error.code || error.message;
+    if (code.includes('auth/invalid-credential') || code.includes('auth/wrong-password') || code.includes('auth/user-not-found')) {
+      return 'The email or password you entered is incorrect. Please try again.';
+    }
+    if (code.includes('auth/email-already-in-use')) {
+      return 'An account with this email already exists. Try signing in instead.';
+    }
+    if (code.includes('auth/weak-password')) {
+      return 'Your password is too weak. Please use at least 6 characters.';
+    }
+    if (code.includes('auth/network-request-failed') || code.includes('offline')) {
+      return 'Connection problem. Please check your internet or disable ad-blockers and try again.';
+    }
+    if (code.includes('auth/popup-closed-by-user')) {
+      return 'The login popup was closed. Please try again.';
+    }
+    return 'Something went wrong. Please check your details and try again.';
+  };
+
   const handleForgotPassword = async () => {
     if (!email) {
       setError('Please enter your email address first.');
       return;
     }
     setError('');
+    setSuccess('');
     setLoading(true);
     try {
       await resetPassword(email);
-      setSuccess('Password reset link sent to your email!');
+      setSuccess('Check your inbox! We\'ve sent a password reset link.');
     } catch (err) {
-      setError(err.message);
+      setError(getFriendlyErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -50,6 +70,7 @@ export const Auth = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
 
     // Save/Clear email for Remember Me
@@ -75,7 +96,8 @@ export const Auth = () => {
         if (role) navigate(`/${role}`);
       }
     } catch (err) {
-      setError(err.message);
+      console.error('Auth Error:', err);
+      setError(getFriendlyErrorMessage(err));
     } finally {
       setLoading(false);
     }

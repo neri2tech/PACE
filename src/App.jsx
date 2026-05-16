@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { SuperadminDashboard, TeacherDashboard, StudentDashboard, Login } from './components/Dashboards';
 import { Bootstrap } from './components/Bootstrap';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Layout } from './components/Layout';
+
+// Lazy load dashboards for faster initial bundle and smoother transitions
+const SuperadminDashboard = lazy(() => import('./components/SuperadminDashboard').then(m => ({ default: m.SuperadminDashboard })));
+const TeacherDashboard = lazy(() => import('./components/TeacherDashboardComponents').then(m => ({ default: m.TeacherDashboard })));
+const StudentDashboard = lazy(() => import('./components/Dashboards').then(m => ({ default: m.StudentDashboard })));
+const Login = lazy(() => import('./components/Auth').then(m => ({ default: m.Auth })));
 
 // Loading Spinner for auth transitions
 const LoadingScreen = () => (
@@ -50,28 +55,30 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/bootstrap" element={<Bootstrap />} />
+        <Suspense fallback={<LoadingScreen />}>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/bootstrap" element={<Bootstrap />} />
 
-          <Route path="/superadmin/*" element={
-            <PrivateRoute allowedRoles={['superadmin']}>
-              <Layout><SuperadminDashboard /></Layout>
-            </PrivateRoute>
-          } />
-          <Route path="/teacher/*" element={
-            <PrivateRoute allowedRoles={['teacher']}>
-              <Layout><TeacherDashboard /></Layout>
-            </PrivateRoute>
-          } />
-          <Route path="/student/*" element={
-            <PrivateRoute allowedRoles={['student']}>
-              <Layout><StudentDashboard /></Layout>
-            </PrivateRoute>
-          } />
+            <Route path="/superadmin/*" element={
+              <PrivateRoute allowedRoles={['superadmin']}>
+                <Layout><SuperadminDashboard /></Layout>
+              </PrivateRoute>
+            } />
+            <Route path="/teacher/*" element={
+              <PrivateRoute allowedRoles={['teacher']}>
+                <Layout><TeacherDashboard /></Layout>
+              </PrivateRoute>
+            } />
+            <Route path="/student/*" element={
+              <PrivateRoute allowedRoles={['student']}>
+                <Layout><StudentDashboard /></Layout>
+              </PrivateRoute>
+            } />
 
-          <Route path="*" element={<RequireAuthRedirect />} />
-        </Routes>
+            <Route path="*" element={<RequireAuthRedirect />} />
+          </Routes>
+        </Suspense>
       </Router>
     </AuthProvider>
   );

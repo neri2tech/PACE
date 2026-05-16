@@ -14,6 +14,16 @@ const PrivateRoute = ({ children, allowedRoles }) => {
 };
 
 function App() {
+  React.useEffect(() => {
+    const APP_VERSION = '1.0.1'; // Update this to force a clear-out
+    const currentVersion = localStorage.getItem('pace_version');
+    if (currentVersion !== APP_VERSION) {
+      localStorage.clear();
+      localStorage.setItem('pace_version', APP_VERSION);
+      console.log('App updated: Cache cleared');
+    }
+  }, []);
+
   return (
     <AuthProvider>
       <Router>

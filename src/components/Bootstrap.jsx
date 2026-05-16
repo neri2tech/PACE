@@ -34,29 +34,47 @@ export const Bootstrap = () => {
     setLoading(false);
   };
 
+  const clearCache = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    setStatus('SUCCESS: Local storage and session cache cleared.');
+  };
+
   return (
     <div style={{ padding: '2rem', textAlign: 'center', background: '#f0f4f8', height: '100vh' }}>
-      <h1>PACE System Bootstrap</h1>
-      <p>Click below to initialize the primary Superadmin account.</p>
-      <button 
-        onClick={createAdmin} 
-        disabled={loading}
-        style={{ 
-          padding: '1rem 2rem', 
-          background: 'var(--color-primary, #2563eb)', 
-          color: 'white', 
-          border: 'none', 
-          borderRadius: '8px',
-          cursor: 'pointer',
-          fontSize: '1.1rem'
-        }}
-      >
-        {loading ? 'Processing...' : 'Create Admin Account'}
-      </button>
+      <h1>PACE System Utilities</h1>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '400px', margin: '0 auto' }}>
+        <button 
+          onClick={createAdmin} 
+          disabled={loading}
+          style={buttonStyle}
+        >
+          {loading ? 'Processing...' : '1. Initialize Admin Account'}
+        </button>
+
+        <button 
+          onClick={clearCache}
+          style={{ ...buttonStyle, background: '#64748b' }}
+        >
+          2. Clear System Data (Cookies/Cache)
+        </button>
+      </div>
+      
       <p style={{ marginTop: '2rem', fontWeight: 'bold' }}>{status}</p>
       <div style={{ marginTop: '2rem' }}>
         <a href="/login">Go to Login</a>
       </div>
     </div>
   );
+};
+
+const buttonStyle = { 
+  padding: '1rem 2rem', 
+  background: '#2563eb', 
+  color: 'white', 
+  border: 'none', 
+  borderRadius: '8px',
+  cursor: 'pointer',
+  fontSize: '1.1rem',
+  width: '100%'
 };

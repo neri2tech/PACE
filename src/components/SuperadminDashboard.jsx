@@ -82,8 +82,13 @@ export const SuperadminDashboard = () => {
     e.preventDefault();
     setIsInviting(true);
     try {
-      const { initializeApp: initApp, getApps } = await import('firebase/app');
-      const { getAuth: getSecondaryAuth, createUserWithEmailAndPassword: createUser, signOut: secondarySignOut } = await import('firebase/auth');
+      const fbApp = await import('firebase/app');
+      const fbAuth = await import('firebase/auth');
+      const initApp = fbApp.initializeApp;
+      const getApps = fbApp.getApps;
+      const getSecondaryAuth = fbAuth.getAuth;
+      const createUser = fbAuth.createUserWithEmailAndPassword;
+      const secondarySignOut = fbAuth.signOut;
 
       const existingApps = getApps();
       const secondaryApp = existingApps.find(a => a.name === 'SecondaryAdmin') 

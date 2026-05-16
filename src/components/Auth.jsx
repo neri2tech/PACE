@@ -3,10 +3,22 @@ import { useAuth } from '../context/AuthContext';
 import { Users, Lock, Mail, UserPlus, LogIn, School, BookOpen, Eye, EyeOff, CheckCircle, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
-import authBg from '../assets/auth-bg.png';
+import bg1 from '../assets/auth-bg-1.jpg';
+import bg2 from '../assets/auth-bg-2.jpg';
 
 export const Auth = () => {
   const { login, register, user, loginWithGoogle, resetPassword, loading: authLoading } = useAuth();
+  const [currentBg, setCurrentBg] = useState(0);
+  const backgrounds = [bg1, bg2];
+
+  // Slideshow Logic
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentBg(prev => (prev + 1) % backgrounds.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [backgrounds.length]);
+
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -19,7 +31,7 @@ export const Auth = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
   // Handle Remember Me on mount
   useEffect(() => {

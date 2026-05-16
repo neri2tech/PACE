@@ -40,7 +40,7 @@ export const GeminiAssistant = () => {
       
       Always be helpful, professional, and concise. If a user asks how to do something, give them step-by-step instructions based on the dashboards we have.`;
 
-      const genAI = new GoogleGenerativeAI("AIzaSyDoVI_cHd0RDpAYIbXO4J7Ul0GiZHAbnW8");
+      const genAI = new GoogleGenerativeAI("AIzaSyBX6X43f4Q3Pw7Zk-l5n-kRXoRBcDGtH1I");
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
       const prompt = `${systemPrompt}\n\nUser Question: ${input}`;

@@ -84,23 +84,27 @@ export const AuthProvider = ({ children }) => {
         // Set a timeout to prevent infinite white screen if Firestore hangs
         const roleTimeout = setTimeout(() => {
           if (loading) {
-            console.warn('Role fetch timed out, defaulting to fallback');
+            console.warn('Role fetch timed out after 12s, defaulting to fallback');
             setLoading(false);
           }
-        }, 8000); // 8 second fail-safe
+        }, 12000); // Increased to 12s for diagnostic period
 
         try {
+          console.log(`[Auth] Fetching role for UID: ${currentUser.uid}...`);
           const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+          
           if (userDoc.exists()) {
             const userData = userDoc.data();
+            console.log(`[Auth] Role resolved: ${userData.role}`);
             setRole(userData.role);
             localStorage.setItem('role', userData.role);
           } else {
+            console.warn(`[Auth] No user document found for ${currentUser.uid}.`);
             const stored = localStorage.getItem('role');
             setRole(stored);
           }
         } catch (error) {
-          console.error("Error fetching user role:", error);
+          console.error("[Auth] Firestore fetch error:", error);
           const stored = localStorage.getItem('role');
           if (stored) setRole(stored);
         } finally {

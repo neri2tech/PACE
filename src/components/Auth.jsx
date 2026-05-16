@@ -99,7 +99,7 @@ export const Auth = () => {
       <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '400px', height: '400px', background: 'var(--color-secondary)', borderRadius: '50%', filter: 'blur(100px)', opacity: 0.15 }}></div>
       <div style={{ position: 'absolute', bottom: '-10%', left: '-10%', width: '400px', height: '400px', background: 'var(--color-accent)', borderRadius: '50%', filter: 'blur(100px)', opacity: 0.1 }}></div>
 
-      <div className="card" style={{ 
+      <div className="card animate-fade" style={{ 
         width: '100%', 
         maxWidth: '480px', 
         padding: '0', 

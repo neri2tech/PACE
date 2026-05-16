@@ -295,51 +295,118 @@ export const SuperadminDashboard = () => {
       )}
 
       {activeTab === 'settings' && (
-        <div className="card animate-scale" style={{ padding: '2rem', maxWidth: '600px' }}>
-          <h2 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <Settings size={20} color="var(--color-primary)" />
-            School Settings
-          </h2>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <div className="form-group">
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>School Name</label>
-              <div style={{ display: 'flex', gap: '0.75rem' }}>
-                <input 
-                  type="text" 
-                  className="form-input" 
-                  placeholder="e.g. PACE Academy" 
-                  defaultValue={user?.schoolName || 'PACE Academy'}
-                  id="schoolNameInput"
-                />
+        <div className="animate-scale" style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: '2rem', alignItems: 'start' }}>
+          {/* Settings Navigation */}
+          <div className="card" style={{ padding: '0.75rem', position: 'sticky', top: '2rem' }}>
+            {[
+              { id: 'gen', label: 'General Info', icon: Settings },
+              { id: 'acad', label: 'Academic Terms', icon: School },
+              { id: 'users', icon: Users, label: 'User Control' },
+              { id: 'sec', label: 'Security & Privacy', icon: Activity }
+            ].map(item => (
+              <button key={item.id} className="btn" style={{ 
+                width: '100%', textAlign: 'left', justifyContent: 'flex-start', padding: '0.875rem 1rem',
+                background: item.id === 'gen' ? 'var(--color-background)' : 'transparent',
+                color: item.id === 'gen' ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+                fontWeight: '700', borderRadius: '10px', gap: '0.75rem', border: 'none'
+              }}>
+                <item.icon size={18} /> {item.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Settings Panel */}
+          <div className="card" style={{ padding: '2.5rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+              {/* Institutional Branding */}
+              <section>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+                  <div style={{ padding: '0.5rem', background: 'var(--gradient-brand)', borderRadius: '10px', color: 'white' }}>
+                    <School size={20} />
+                  </div>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: '800', letterSpacing: '-0.02em' }}>Institutional Identity</h3>
+                </div>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                  <div className="form-group">
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>School Name</label>
+                    <input type="text" className="form-input" defaultValue={user?.schoolName || 'PACE Academy'} id="schoolNameInput" style={{ fontWeight: '600' }} />
+                  </div>
+                  <div className="form-group">
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>Branding Logo</label>
+                    <button className="btn btn-outline" style={{ width: '100%', height: '42px' }}>Upload New Logo</button>
+                  </div>
+                </div>
+              </section>
+
+              {/* Term Management */}
+              <section>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+                  <div style={{ padding: '0.5rem', background: 'var(--color-accent)', borderRadius: '10px', color: 'white' }}>
+                    <Activity size={20} />
+                  </div>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: '800', letterSpacing: '-0.02em' }}>Academic Term Cycle</h3>
+                </div>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.5rem' }}>
+                  <div className="form-group">
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>Current Session</label>
+                    <select className="form-input" style={{ fontWeight: '600' }}>
+                      <option>2025/2026 Academic Session</option>
+                      <option>2024/2025 Academic Session</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>Active Term</label>
+                    <select className="form-input" style={{ fontWeight: '600' }}>
+                      <option>First Term (Fall)</option>
+                      <option>Second Term (Spring)</option>
+                      <option>Third Term (Summer)</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>Target Score (%)</label>
+                    <input type="number" className="form-input" defaultValue="75" style={{ fontWeight: '600' }} />
+                  </div>
+                </div>
+              </section>
+
+              {/* User Management Overview */}
+              <section style={{ padding: '1.5rem', background: 'var(--color-background)', borderRadius: '15px' }}>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: '800', marginBottom: '1rem', color: 'var(--color-primary)' }}>Quick User Stats</h4>
+                <div style={{ display: 'flex', gap: '2rem' }}>
+                  <div>
+                    <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontWeight: '700', textTransform: 'uppercase' }}>Total Staff</p>
+                    <p style={{ fontSize: '1.5rem', fontWeight: '800' }}>{teachersList.length}</p>
+                  </div>
+                  <div style={{ borderLeft: '1px solid var(--color-border)', paddingLeft: '2rem' }}>
+                    <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontWeight: '700', textTransform: 'uppercase' }}>Active Students</p>
+                    <p style={{ fontSize: '1.5rem', fontWeight: '800' }}>412</p>
+                  </div>
+                  <div style={{ marginLeft: 'auto' }}>
+                    <button className="btn btn-primary" style={{ padding: '0.6rem 1.25rem', fontSize: '0.85rem' }}>Manage All Users</button>
+                  </div>
+                </div>
+              </section>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', borderTop: '1px solid var(--color-border)', paddingTop: '2rem' }}>
+                <button className="btn btn-outline" style={{ padding: '0.75rem 1.5rem' }}>Restore Defaults</button>
                 <button 
                   className="btn btn-primary"
+                  style={{ padding: '0.75rem 2.5rem', boxShadow: 'var(--shadow-lg)' }}
                   onClick={async () => {
                     const newName = document.getElementById('schoolNameInput').value;
                     try {
                       await setDoc(doc(db, 'users', user.uid), { schoolName: newName }, { merge: true });
-                      alert('School name updated successfully!');
+                      alert('✓ PACE Configuration Deployed Successfully');
                       window.location.reload();
                     } catch (e) {
-                      alert('Failed to update: ' + e.message);
+                      alert('Deployment failed: ' + e.message);
                     }
                   }}
                 >
-                  Save
+                  Deploy Configuration
                 </button>
-              </div>
-              <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.5rem' }}>
-                This name will appear on all student portals and dashboard banners.
-              </p>
-            </div>
-
-            <div style={{ padding: '1.5rem', background: 'var(--color-background)', borderRadius: '12px', border: '1px dashed var(--color-border)' }}>
-              <h3 style={{ fontSize: '0.9rem', marginBottom: '0.75rem' }}>Branding Logo</h3>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ width: '64px', height: '64px', borderRadius: '12px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--color-border)' }}>
-                  <School size={32} color="var(--color-primary)" />
-                </div>
-                <button className="btn btn-outline" style={{ fontSize: '0.875rem' }}>Change Logo</button>
               </div>
             </div>
           </div>

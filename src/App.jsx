@@ -5,10 +5,10 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { Layout } from './components/Layout';
 
 // Lazy load dashboards for faster initial bundle and smoother transitions
-const SuperadminDashboard = lazy(() => import('./components/SuperadminDashboard').then(m => ({ default: m.SuperadminDashboard })));
-const TeacherDashboard = lazy(() => import('./components/TeacherDashboardComponents').then(m => ({ default: m.TeacherDashboard })));
-const StudentDashboard = lazy(() => import('./components/Dashboards').then(m => ({ default: m.StudentDashboard })));
-const Login = lazy(() => import('./components/Auth').then(m => ({ default: m.Auth })));
+import { SuperadminDashboard } from './components/SuperadminDashboard';
+import { TeacherDashboard } from './components/TeacherDashboardComponents';
+import { StudentDashboard } from './components/Dashboards';
+import { Auth as Login } from './components/Auth';
 
 // Error Boundary for graceful recovery
 class ErrorBoundary extends React.Component {
@@ -37,21 +37,7 @@ class ErrorBoundary extends React.Component {
 }
 
 // Loading Spinner for auth transitions
-const LoadingScreen = () => (
-  <div style={{
-    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-    height: '100vh', background: 'var(--color-background)', gap: '1rem'
-  }}>
-    <div style={{
-      width: '48px', height: '48px', borderRadius: '50%',
-      border: '4px solid var(--color-border)',
-      borderTopColor: 'var(--color-secondary)',
-      animation: 'spin 0.8s linear infinite'
-    }} />
-    <p style={{ color: 'var(--color-text-muted)', fontWeight: '500' }}>Loading PACE...</p>
-    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-  </div>
-);
+const LoadingScreen = () => null;
 
 // PrivateRoute waits for loading before deciding
 const PrivateRoute = ({ children, allowedRoles }) => {
@@ -86,7 +72,7 @@ function App() {
     <ErrorBoundary>
       <AuthProvider>
         <Router>
-          <Suspense fallback={<LoadingScreen />}>
+          <div className="app-container">
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/bootstrap" element={<Bootstrap />} />
@@ -109,7 +95,7 @@ function App() {
 
               <Route path="*" element={<RequireAuthRedirect />} />
             </Routes>
-          </Suspense>
+          </div>
         </Router>
       </AuthProvider>
     </ErrorBoundary>

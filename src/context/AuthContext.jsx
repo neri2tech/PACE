@@ -17,8 +17,8 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [role, setRole] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [role, setRole] = useState(localStorage.getItem('pace_role'));
+  const [loading, setLoading] = useState(!localStorage.getItem('pace_role'));
 
   const fetchRole = useCallback(async (currentUser) => {
     if (!currentUser) {

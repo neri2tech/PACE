@@ -10,6 +10,32 @@ const TeacherDashboard = lazy(() => import('./components/TeacherDashboardCompone
 const StudentDashboard = lazy(() => import('./components/Dashboards').then(m => ({ default: m.StudentDashboard })));
 const Login = lazy(() => import('./components/Auth').then(m => ({ default: m.Auth })));
 
+// Error Boundary for graceful recovery
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error("Critical Runtime Error:", error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', padding: '2rem', textAlign: 'center', background: '#f9fafb' }}>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#111827' }}>Something went wrong</h2>
+          <p style={{ color: '#4b5563', marginBottom: '2rem' }}>We encountered an unexpected error. Please try refreshing the page.</p>
+          <button onClick={() => window.location.reload()} style={{ padding: '0.75rem 1.5rem', background: '#0a2f38', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600' }}>Refresh Application</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 // Loading Spinner for auth transitions
 const LoadingScreen = () => (
   <div style={{
@@ -53,34 +79,36 @@ function App() {
   }, []);
 
   return (
-    <AuthProvider>
-      <Router>
-        <Suspense fallback={<LoadingScreen />}>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/bootstrap" element={<Bootstrap />} />
+    <ErrorBoundary>
+      <AuthProvider>
+        <Router>
+          <Suspense fallback={<LoadingScreen />}>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/bootstrap" element={<Bootstrap />} />
 
-            <Route path="/superadmin/*" element={
-              <PrivateRoute allowedRoles={['superadmin']}>
-                <Layout><SuperadminDashboard /></Layout>
-              </PrivateRoute>
-            } />
-            <Route path="/teacher/*" element={
-              <PrivateRoute allowedRoles={['teacher']}>
-                <Layout><TeacherDashboard /></Layout>
-              </PrivateRoute>
-            } />
-            <Route path="/student/*" element={
-              <PrivateRoute allowedRoles={['student']}>
-                <Layout><StudentDashboard /></Layout>
-              </PrivateRoute>
-            } />
+              <Route path="/superadmin/*" element={
+                <PrivateRoute allowedRoles={['superadmin']}>
+                  <Layout><SuperadminDashboard /></Layout>
+                </PrivateRoute>
+              } />
+              <Route path="/teacher/*" element={
+                <PrivateRoute allowedRoles={['teacher']}>
+                  <Layout><TeacherDashboard /></Layout>
+                </PrivateRoute>
+              } />
+              <Route path="/student/*" element={
+                <PrivateRoute allowedRoles={['student']}>
+                  <Layout><StudentDashboard /></Layout>
+                </PrivateRoute>
+              } />
 
-            <Route path="*" element={<RequireAuthRedirect />} />
-          </Routes>
-        </Suspense>
-      </Router>
-    </AuthProvider>
+              <Route path="*" element={<RequireAuthRedirect />} />
+            </Routes>
+          </Suspense>
+        </Router>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

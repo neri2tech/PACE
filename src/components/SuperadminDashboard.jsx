@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Users, School, BarChart3, Settings, UserPlus, BookOpen } from 'lucide-react';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { getFirestore, collection, addDoc, getDocs } from 'firebase/firestore';
-import { firebaseApp } from '../firebase';
-import { StudentRegistration } from './StudentRegistration'; // Imported here
+import { getAuth } from 'firebase/auth';
+import { getFirestore, collection, addDoc, getDocs, doc, setDoc } from 'firebase/firestore';
+import { firebaseApp, firebaseConfig } from '../firebase';
+import { StudentRegistration } from './StudentRegistration';
 
 export const SuperadminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -18,44 +18,39 @@ export const SuperadminDashboard = () => {
   const db = getFirestore(firebaseApp);
   const auth = getAuth(firebaseApp);
 
-  // Fetch real teachers (optional, but good for real flow)
-  useEffect(() => {
-    const fetchTeachers = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'teachers'));
-        const teachers = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        if (teachers.length > 0) {
-          setTeachersList(teachers);
-        }
-      } catch (e) {
-        console.error("Error fetching teachers", e);
-      }
-    };
-    fetchTeachers();
-  }, [db]);
-
   const handleInviteTeacher = async (e) => {
     e.preventDefault();
     setIsInviting(true);
     try {
-      // 1. Create Teacher Auth Account with a temporary password
-      const tempPassword = Math.random().toString(36).slice(-8);
-      await createUserWithEmailAndPassword(auth, newTeacher.email, tempPassword);
+      // Create a secondary app instance to create user without logging out the current admin
+      const { initializeApp: initApp } = await import('firebase/app');
+      const { getAuth: getSecondaryAuth, createUserWithEmailAndPassword: createUser, signOut: secondarySignOut } = await import('firebase/auth');
       
-      // 2. Save Teacher to Firestore
-      const docRef = await addDoc(collection(db, 'teachers'), {
+      const secondaryApp = initApp(firebaseConfig, 'SecondaryAdmin');
+      const secondaryAuth = getSecondaryAuth(secondaryApp);
+
+      // 1. Create Teacher Auth Account
+      const tempPassword = Math.random().toString(36).slice(-8);
+      const userCredential = await createUser(secondaryAuth, newTeacher.email, tempPassword);
+      const newUid = userCredential.user.uid;
+      
+      // Sign out of the secondary app immediately
+      await secondarySignOut(secondaryAuth);
+      
+      // 2. Save Teacher to 'users' collection (centralized role management)
+      await setDoc(doc(db, 'users', newUid), {
         name: newTeacher.name,
         email: newTeacher.email,
         subject: newTeacher.subject,
         status: 'Active',
-        role: 'teacher'
+        role: 'teacher',
+        createdAt: new Date().toISOString()
       });
 
       // 3. Update local state
-      setTeachersList([...teachersList, { id: docRef.id, ...newTeacher, status: 'Active' }]);
+      setTeachersList([...teachersList, { id: newUid, ...newTeacher, status: 'Active' }]);
       
-      // In a real app, you would send an email here with the temp password.
-      alert(`Teacher created successfully!\nEmail: ${newTeacher.email}\nTemp Password: ${tempPassword}\nPlease share this securely with the teacher.`);
+      alert(`Teacher created successfully!\nEmail: ${newTeacher.email}\nTemp Password: ${tempPassword}`);
       
       setNewTeacher({ name: '', email: '', subject: '' });
       setShowInviteModal(false);

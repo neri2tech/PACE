@@ -1,6 +1,7 @@
 import React from 'react';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
+import { GeminiAssistant } from './GeminiAssistant';
 
 export const Layout = ({ children }) => (
   <div className="app-layout" style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
@@ -11,5 +12,6 @@ export const Layout = ({ children }) => (
         {children}
       </main>
     </div>
+    <GeminiAssistant />
   </div>
 );

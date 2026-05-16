@@ -5,7 +5,8 @@ import {
   signOut, 
   onAuthStateChanged,
   GoogleAuthProvider,
-  signInWithPopup 
+  signInWithPopup,
+  sendPasswordResetEmail
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
@@ -16,6 +17,10 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(localStorage.getItem('role') || null);
   const [loading, setLoading] = useState(true);
+
+  const resetPassword = (email) => {
+    return sendPasswordResetEmail(auth, email);
+  };
 
   const loginWithGoogle = async (defaultRole = 'teacher') => {
     const provider = new GoogleAuthProvider();
@@ -50,39 +55,52 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
-      setUser(u);
-      if (u) {
-        // Fetch role from Firestore
-        const userDoc = await getDoc(doc(db, 'users', u.uid));
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          setRole(userData.role);
-          localStorage.setItem('role', userData.role);
+      try {
+        setUser(u);
+        if (u) {
+          // Fetch role from Firestore
+          const userDoc = await getDoc(doc(db, 'users', u.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            setRole(userData.role);
+            localStorage.setItem('role', userData.role);
+          } else {
+            // Fallback if not in Firestore
+            const stored = localStorage.getItem('role');
+            setRole(stored);
+          }
         } else {
-          // Fallback if not in Firestore
-          const stored = localStorage.getItem('role');
-          setRole(stored);
+          setRole(null);
+          localStorage.removeItem('role');
         }
-      } else {
-        setRole(null);
-        localStorage.removeItem('role');
+      } catch (err) {
+        console.error("Auth state error (using fallback):", err);
+        // On error, try to keep the existing role from localStorage if available
+        const stored = localStorage.getItem('role');
+        if (stored) setRole(stored);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
     return () => unsub();
   }, [auth]);
 
   const login = async (email, password) => {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const u = userCredential.user;
-    const userDoc = await getDoc(doc(db, 'users', u.uid));
-    if (userDoc.exists()) {
-      const userData = userDoc.data();
-      setRole(userData.role);
-      localStorage.setItem('role', userData.role);
-      return userData.role;
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const u = userCredential.user;
+      const userDoc = await getDoc(doc(db, 'users', u.uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        setRole(userData.role);
+        localStorage.setItem('role', userData.role);
+        return userData.role;
+      }
+      return null;
+    } catch (error) {
+      console.error("Login error:", error);
+      throw error;
     }
-    return null;
   };
 
   const register = async (email, password, chosenRole, additionalData = {}) => {
@@ -109,7 +127,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, role, loading, login, register, logout, loginWithGoogle }}>
+    <AuthContext.Provider value={{ user, role, loading, login, register, logout, loginWithGoogle, resetPassword }}>
       {!loading && children}
     </AuthContext.Provider>
   );

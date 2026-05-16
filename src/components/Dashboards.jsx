@@ -1,59 +1,24 @@
-import React, { useState } from 'react';
-import { SuperadminDashboard as RealSuperadminDashboard } from './SuperadminDashboard';
-import { StudentRegistration } from './StudentRegistration';
-import { 
-  ClassPerformanceGrid, 
-  StudentInterventionView, 
-  ResourceManager, 
-  TeacherFlexibilityControls 
-} from './TeacherDashboardComponents';
+import React from 'react';
+import { SuperadminDashboard } from './SuperadminDashboard';
+import { TeacherDashboard } from './TeacherDashboardComponents';
 
-export const SuperadminDashboard = RealSuperadminDashboard;
-
-export const TeacherDashboard = () => {
-  const [selectedStudent, setSelectedStudent] = useState(null);
-
-  // Dummy Data for Class Heatmap
-  const mockStudents = [
-    { id: 1, name: 'Alice Johnson', status: 'On Track', statusColor: 'green', progress: 85 },
-    { id: 2, name: 'Bobby Smith', status: 'Slowing Down', statusColor: 'yellow', progress: 60 },
-    { id: 3, name: 'Charlie Davis', status: 'Stagnant', statusColor: 'red', progress: 30 },
-    { id: 4, name: 'Diana Prince', status: 'On Track', statusColor: 'green', progress: 92 },
-  ];
-
-  return (
-    <div className="main-content">
-      <div style={{ marginBottom: '2rem' }}>
-        <h1>Teacher Command Center</h1>
-        <p style={{ color: 'var(--color-text-muted)' }}>Monitor progress and deploy interventions.</p>
-      </div>
-
-      <ClassPerformanceGrid 
-        students={mockStudents} 
-        onSelectStudent={setSelectedStudent} 
-      />
-
-      <StudentInterventionView 
-        student={selectedStudent} 
-        onClose={() => setSelectedStudent(null)} 
-      />
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-        <ResourceManager />
-        <TeacherFlexibilityControls />
-      </div>
-
-      <div style={{ marginTop: '2rem', borderTop: '1px solid var(--color-border)', paddingTop: '2rem' }}>
-        <StudentRegistration />
-      </div>
-    </div>
-  );
-};
+export { SuperadminDashboard };
+export { TeacherDashboard };
 
 export const StudentDashboard = () => (
-  <div className="main-content">
-    <h1>Student Dashboard</h1>
-    <p>Welcome to your learning portal.</p>
+  <div style={{ padding: '2rem', maxWidth: '900px' }}>
+    <div className="animate-slide-up" style={{ marginBottom: '2rem' }}>
+      <h1 style={{ fontSize: '1.75rem', marginBottom: '0.25rem' }}>Student Portal</h1>
+      <p style={{ color: 'var(--color-text-muted)' }}>Track your learning journey and access resources.</p>
+    </div>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1.5rem' }}>
+      {['My Progress', 'Resources', 'Assignments', 'Messages'].map((item, i) => (
+        <div key={item} className="card animate-slide-up" style={{ animationDelay: `${i * 100}ms`, padding: '1.5rem', textAlign: 'center' }}>
+          <h3 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>{item}</h3>
+          <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Coming soon</p>
+        </div>
+      ))}
+    </div>
   </div>
 );
 

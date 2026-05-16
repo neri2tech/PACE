@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Users, Lock, Mail, UserPlus, LogIn, School, BookOpen } from 'lucide-react';
+import { Users, Lock, Mail, UserPlus, LogIn, School, BookOpen, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 
 export const Auth = () => {
-  const { login, register, user, loginWithGoogle } = useAuth();
+  const { login, register, user, loginWithGoogle, resetPassword } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -14,8 +15,26 @@ export const Auth = () => {
   const [schoolName, setSchoolName] = useState('');
   const [selectedRole, setSelectedRole] = useState('superadmin'); // superadmin = school admin
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError('Please enter your email address first.');
+      return;
+    }
+    setError('');
+    setLoading(true);
+    try {
+      await resetPassword(email);
+      setSuccess('Password reset link sent to your email!');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleGoogleLogin = async () => {
     setError('');
@@ -80,7 +99,7 @@ export const Auth = () => {
       <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '400px', height: '400px', background: 'var(--color-secondary)', borderRadius: '50%', filter: 'blur(100px)', opacity: 0.15 }}></div>
       <div style={{ position: 'absolute', bottom: '-10%', left: '-10%', width: '400px', height: '400px', background: 'var(--color-accent)', borderRadius: '50%', filter: 'blur(100px)', opacity: 0.1 }}></div>
 
-      <div className="card" style={{ 
+      <div className="card animate-fade" style={{ 
         width: '100%', 
         maxWidth: '480px', 
         padding: '0', 
@@ -290,14 +309,46 @@ export const Auth = () => {
               <label className="form-label">
                 <Lock size={16} /> Password
               </label>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="form-input"
-                placeholder="••••••••"
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="form-input"
+                  placeholder="••••••••"
+                  style={{ paddingRight: '2.5rem' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '0.75rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: 'var(--color-text-muted)',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+              {isLogin && (
+                <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
+                  <button 
+                    type="button" 
+                    onClick={handleForgotPassword}
+                    style={{ background: 'none', border: 'none', color: 'var(--color-secondary)', fontSize: '0.8rem', cursor: 'pointer', fontWeight: '600' }}
+                  >
+                    Forgot Password?
+                  </button>
+                </div>
+              )}
             </div>
 
             {error && (
@@ -311,6 +362,20 @@ export const Auth = () => {
                 fontWeight: '500'
               }}>
                 {error}
+              </div>
+            )}
+
+            {success && (
+              <div style={{ 
+                padding: '0.75rem', 
+                background: 'rgba(16, 185, 129, 0.1)', 
+                color: 'var(--color-status-green)', 
+                borderRadius: 'var(--radius-md)',
+                fontSize: '0.875rem',
+                borderLeft: '4px solid var(--color-status-green)',
+                fontWeight: '500'
+              }}>
+                {success}
               </div>
             )}
 

@@ -55,11 +55,14 @@ export const Sidebar = () => {
 };
 
 const sidebarStyle = {
-  width: '220px',
+  width: '260px',
   background: 'var(--color-surface)',
   borderRight: '1px solid var(--color-border)',
-  padding: '1rem',
+  padding: '1.5rem 1rem',
   overflowY: 'auto',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '2rem'
 };
 
 const ulStyle = {
@@ -68,20 +71,24 @@ const ulStyle = {
   margin: 0,
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.75rem',
+  gap: '0.5rem',
 };
 
 const linkStyle = {
   display: 'flex',
   alignItems: 'center',
-  gap: '0.5rem',
-  color: 'var(--color-text)',
+  gap: '0.75rem',
+  color: 'var(--color-text-secondary)',
   textDecoration: 'none',
-  padding: '0.5rem 0.75rem',
-  borderRadius: 'var(--radius-sm)',
+  padding: '0.875rem 1rem',
+  borderRadius: '12px',
+  fontWeight: '600',
+  fontSize: '0.9rem',
+  transition: 'all 0.2s ease',
 };
 
 const activeLinkStyle = {
-  background: 'var(--color-primary)',
-  color: '#fff',
+  background: 'var(--color-background)',
+  color: 'var(--color-primary)',
+  boxShadow: 'inset 0 0 0 1px var(--color-border)',
 };

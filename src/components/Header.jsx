@@ -5,7 +5,7 @@ import { LogOut } from 'lucide-react';
 import logo from '../assets/logo.png';
 
 export const Header = () => {
-  const { user, logout } = useAuth();
+  const { user, role, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -44,8 +44,19 @@ export const Header = () => {
       
       <div className="account" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: '0.875rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{user?.email}</div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Connected</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'flex-end' }}>
+            <span style={{ 
+              width: '8px', 
+              height: '8px', 
+              borderRadius: '50%', 
+              background: 'var(--color-status-green)',
+              boxShadow: '0 0 8px var(--color-status-green)'
+            }}></span>
+            <div style={{ fontSize: '0.875rem', fontWeight: '700', color: 'var(--color-text-main)', textTransform: 'capitalize' }}>
+              {role || 'User'}
+            </div>
+          </div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{user?.email}</div>
         </div>
         <button 
           onClick={handleLogout} 

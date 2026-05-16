@@ -115,11 +115,9 @@ const navigate = useNavigate();
       overflow: 'hidden'
     }}>
       {/* Column 1: Showcase Section */}
-      <div className="animate-fade" style={{ 
+      <div className="auth-showcase animate-fade" style={{ 
         flex: '1.2',
         position: 'relative',
-        display: 'none', // Hidden on mobile
-        '@media (min-width: 1024px)': { display: 'block' },
         overflow: 'hidden'
       }}>
         <div style={{

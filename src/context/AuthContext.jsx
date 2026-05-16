@@ -21,27 +21,29 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchRole = useCallback(async (currentUser) => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      setLoading(false);
+      return;
+    }
     
-    console.log(`[Auth] Starting role resolution for: ${currentUser.email}`);
+    console.log(`[Auth] Resolving role for: ${currentUser.email}`);
 
-    // 1. Emergency Bypass for primary admin
+    // Emergency Bypass
     if (currentUser.email === 'admin@pace.edu') {
-      console.log('[Auth] Emergency admin bypass activated.');
+      console.log('[Auth] Emergency admin bypass.');
       setRole('superadmin');
       localStorage.setItem('pace_role', 'superadmin');
       setLoading(false);
       return;
     }
 
-    // 2. Try Firestore with a fail-safe timeout
-    const controller = new AbortController();
+    // Fail-safe timeout
     const timeoutId = setTimeout(() => {
-      console.warn('[Auth] Firestore fetch timed out. Using fallback.');
-      const cachedRole = localStorage.getItem('pace_role');
-      if (cachedRole) setRole(cachedRole);
+      console.warn('[Auth] Fetch timeout.');
+      const cached = localStorage.getItem('pace_role');
+      if (cached) setRole(cached);
       setLoading(false);
-    }, 10000); // 10s fallback
+    }, 10000);
 
     try {
       const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
@@ -49,28 +51,26 @@ export const AuthProvider = ({ children }) => {
 
       if (userDoc.exists()) {
         const data = userDoc.data();
-        console.log(`[Auth] Role confirmed from DB: ${data.role}`);
         setRole(data.role);
         localStorage.setItem('pace_role', data.role);
       } else {
-        console.warn(`[Auth] No profile found in DB for ${currentUser.uid}`);
-        const cachedRole = localStorage.getItem('pace_role');
-        setRole(cachedRole || null);
+        const cached = localStorage.getItem('pace_role');
+        setRole(cached || null);
       }
     } catch (err) {
-      console.error('[Auth] Firestore error:', err);
-      const cachedRole = localStorage.getItem('pace_role');
-      setRole(cachedRole || null);
+      console.error('[Auth] Error:', err);
+      const cached = localStorage.getItem('pace_role');
+      setRole(cached || null);
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        fetchRole(currentUser);
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+      if (u) {
+        fetchRole(u);
       } else {
         setRole(null);
         setLoading(false);
@@ -80,48 +80,29 @@ export const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, [fetchRole]);
 
-  const login = async (email, password) => {
-    const result = await signInWithEmailAndPassword(auth, email, password);
-    // Role will be fetched by the onAuthStateChanged listener
-    return result;
-  };
+  const login = (email, password) => signInWithEmailAndPassword(auth, email, password);
 
   const register = async (email, password, selectedRole, additionalData) => {
-    const result = await createUserWithEmailAndPassword(auth, email, password);
-    const { user } = result;
-
+    const res = await createUserWithEmailAndPassword(auth, email, password);
     const userData = {
       email,
       role: selectedRole,
-      uid: user.uid,
+      uid: res.user.uid,
       createdAt: new Date().toISOString(),
       ...additionalData
     };
-
-    await setDoc(doc(db, 'users', user.uid), userData);
+    await setDoc(doc(db, 'users', res.user.uid), userData);
     setRole(selectedRole);
     localStorage.setItem('pace_role', selectedRole);
-    return selectedRole;
+    return res;
   };
 
   const logout = () => signOut(auth);
-  
-  const resetPassword = (email) => sendPasswordResetEmail(auth, email);
-
-  const loginWithGoogle = () => {
-    const provider = new GoogleAuthProvider();
-    return signInWithPopup(auth, provider);
-  };
+  const resetPassword = (e) => sendPasswordResetEmail(auth, e);
+  const loginWithGoogle = () => signInWithPopup(auth, new GoogleAuthProvider());
 
   const value = {
-    user,
-    role,
-    loading,
-    login,
-    register,
-    logout,
-    resetPassword,
-    loginWithGoogle
+    user, role, loading, login, register, logout, resetPassword, loginWithGoogle
   };
 
   return (

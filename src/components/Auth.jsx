@@ -312,6 +312,44 @@ export const Auth = () => {
             <button type="submit" disabled={isProcessing} className="btn btn-primary" style={{ width: '100%', padding: '1rem', borderRadius: '12px', background: 'var(--gradient-brand)', fontSize: '1rem', fontWeight: '700', boxShadow: '0 4px 12px rgba(0, 209, 193, 0.2)', marginTop: '0.5rem' }}>
               {isProcessing ? 'Processing...' : isLogin ? 'Sign Into Dashboard' : 'Create My Account'}
             </button>
+
+            {isLogin && (
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', margin: '1rem 0' }}>
+                  <div style={{ flex: 1, height: '1px', background: 'var(--color-border)' }}></div>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', fontWeight: '600' }}>OR</span>
+                  <div style={{ flex: 1, height: '1px', background: 'var(--color-border)' }}></div>
+                </div>
+
+                <button 
+                  type="button" 
+                  disabled={isProcessing}
+                  onClick={async () => {
+                    setIsProcessing(true);
+                    setError('');
+                    try {
+                      await loginWithGoogle();
+                    } catch (err) {
+                      setError(getFriendlyErrorMessage(err));
+                    } finally {
+                      setIsProcessing(false);
+                    }
+                  }}
+                  style={{ 
+                    width: '100%', padding: '0.875rem', borderRadius: '12px', 
+                    background: 'white', border: '1px solid var(--color-border)',
+                    fontSize: '0.95rem', fontWeight: '600', display: 'flex',
+                    alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
+                    cursor: 'pointer', transition: 'all 0.2s', color: 'var(--color-text-main)'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'white'}
+                >
+                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/smartlock/google.svg" alt="Google" style={{ width: '18px', height: '18px' }} />
+                  Continue with Google
+                </button>
+              </>
+            )}
           </form>
 
           <div style={{ textAlign: 'center', marginTop: '2rem' }}>

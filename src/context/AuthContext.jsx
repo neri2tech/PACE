@@ -99,7 +99,27 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => signOut(auth);
   const resetPassword = (e) => sendPasswordResetEmail(auth, e);
-  const loginWithGoogle = () => signInWithPopup(auth, new GoogleAuthProvider());
+  const loginWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    const userRef = doc(db, 'users', result.user.uid);
+    const userDoc = await getDoc(userRef);
+    
+    if (!userDoc.exists()) {
+      // Create default profile for new Google users
+      const userData = {
+        email: result.user.email,
+        role: 'teacher', // Default role for new Google signups
+        name: result.user.displayName,
+        uid: result.user.uid,
+        createdAt: new Date().toISOString()
+      };
+      await setDoc(userRef, userData);
+      setRole('teacher');
+      localStorage.setItem('pace_role', 'teacher');
+    }
+    return result;
+  };
 
   const value = {
     user, role, loading, login, register, logout, resetPassword, loginWithGoogle

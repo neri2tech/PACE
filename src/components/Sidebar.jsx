@@ -12,27 +12,39 @@ export const Sidebar = () => {
         <ul style={ulStyle}>
           {role === 'superadmin' && (
             <li>
-              <NavLink to="/superadmin" style={linkStyle} activeStyle={activeLinkStyle}>
+              <NavLink 
+                to="/superadmin" 
+                style={({ isActive }) => ({ ...linkStyle, ...(isActive ? activeLinkStyle : {}) })}
+              >
                 <BarChart3 size={18} /> Superadmin
               </NavLink>
             </li>
           )}
           {role === 'teacher' && (
             <li>
-              <NavLink to="/teacher" style={linkStyle} activeStyle={activeLinkStyle}>
+              <NavLink 
+                to="/teacher" 
+                style={({ isActive }) => ({ ...linkStyle, ...(isActive ? activeLinkStyle : {}) })}
+              >
                 <Users size={18} /> Teacher Dashboard
               </NavLink>
             </li>
           )}
           {role === 'student' && (
             <li>
-              <NavLink to="/student" style={linkStyle} activeStyle={activeLinkStyle}>
+              <NavLink 
+                to="/student" 
+                style={({ isActive }) => ({ ...linkStyle, ...(isActive ? activeLinkStyle : {}) })}
+              >
                 <BookOpen size={18} /> My Portal
               </NavLink>
             </li>
           )}
           <li>
-            <NavLink to="/settings" style={linkStyle} activeStyle={activeLinkStyle}>
+            <NavLink 
+              to="/settings" 
+              style={({ isActive }) => ({ ...linkStyle, ...(isActive ? activeLinkStyle : {}) })}
+            >
               <Settings size={18} /> Settings
             </NavLink>
           </li>

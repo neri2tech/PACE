@@ -1,5 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup 
+} from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
@@ -7,8 +14,39 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [role, setRole] = useState(null);
+  const [role, setRole] = useState(localStorage.getItem('role') || null);
   const [loading, setLoading] = useState(true);
+
+  const loginWithGoogle = async (defaultRole = 'teacher') => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const u = result.user;
+      
+      // Check if user already has a role
+      const userDoc = await getDoc(doc(db, 'users', u.uid));
+      
+      if (userDoc.exists()) {
+        const existingRole = userDoc.data().role;
+        setRole(existingRole);
+        localStorage.setItem('role', existingRole);
+        return existingRole;
+      } else {
+        // New user from Google - assign default role (or we can prompt later)
+        await setDoc(doc(db, 'users', u.uid), {
+          email: u.email,
+          name: u.displayName,
+          role: defaultRole,
+          createdAt: new Date().toISOString()
+        });
+        setRole(defaultRole);
+        localStorage.setItem('role', defaultRole);
+        return defaultRole;
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
@@ -71,7 +109,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, role, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, role, loading, login, register, logout, loginWithGoogle }}>
       {!loading && children}
     </AuthContext.Provider>
   );

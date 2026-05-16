@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
       const cached = localStorage.getItem('pace_role');
       if (cached) setRole(cached);
       setLoading(false);
-    }, 10000);
+    }, 15000); // Increased to 15s for high-latency environments
 
     try {
       const userDoc = await getDoc(doc(db, 'users', currentUser.uid));

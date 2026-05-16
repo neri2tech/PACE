@@ -119,6 +119,7 @@ export const SuperadminDashboard = () => {
     { id: 'overview', label: 'Overview', icon: BarChart3 },
     { id: 'teachers', label: 'Teachers', icon: Users },
     { id: 'students', label: 'Students', icon: BookOpen },
+    { id: 'settings', label: 'Settings', icon: Settings }
   ];
 
   return (
@@ -290,6 +291,58 @@ export const SuperadminDashboard = () => {
       {activeTab === 'students' && (
         <div className="animate-scale">
           <StudentRegistration />
+        </div>
+      )}
+
+      {activeTab === 'settings' && (
+        <div className="card animate-scale" style={{ padding: '2rem', maxWidth: '600px' }}>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <Settings size={20} color="var(--color-primary)" />
+            School Settings
+          </h2>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div className="form-group">
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>School Name</label>
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  placeholder="e.g. PACE Academy" 
+                  defaultValue={user?.schoolName || 'PACE Academy'}
+                  id="schoolNameInput"
+                />
+                <button 
+                  className="btn btn-primary"
+                  onClick={async () => {
+                    const newName = document.getElementById('schoolNameInput').value;
+                    try {
+                      await setDoc(doc(db, 'users', user.uid), { schoolName: newName }, { merge: true });
+                      alert('School name updated successfully!');
+                      window.location.reload();
+                    } catch (e) {
+                      alert('Failed to update: ' + e.message);
+                    }
+                  }}
+                >
+                  Save
+                </button>
+              </div>
+              <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.5rem' }}>
+                This name will appear on all student portals and dashboard banners.
+              </p>
+            </div>
+
+            <div style={{ padding: '1.5rem', background: 'var(--color-background)', borderRadius: '12px', border: '1px dashed var(--color-border)' }}>
+              <h3 style={{ fontSize: '0.9rem', marginBottom: '0.75rem' }}>Branding Logo</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ width: '64px', height: '64px', borderRadius: '12px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--color-border)' }}>
+                  <School size={32} color="var(--color-primary)" />
+                </div>
+                <button className="btn btn-outline" style={{ fontSize: '0.875rem' }}>Change Logo</button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

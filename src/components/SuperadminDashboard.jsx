@@ -1,22 +1,78 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users, School, BarChart3, Settings, UserPlus, BookOpen } from 'lucide-react';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getFirestore, collection, addDoc, getDocs } from 'firebase/firestore';
+import { firebaseApp } from '../firebase';
 
 export const SuperadminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [isInviting, setIsInviting] = useState(false);
+  const [newTeacher, setNewTeacher] = useState({ name: '', email: '', subject: '' });
+  const [teachersList, setTeachersList] = useState([
+    { id: 1, name: 'Sarah Jenkins', email: 'sarah.j@pace.edu', subject: 'Mathematics', status: 'Active' },
+    { id: 2, name: 'Marcus Cole', email: 'marcus.c@pace.edu', subject: 'History', status: 'Active' },
+  ]);
+
+  const db = getFirestore(firebaseApp);
+  const auth = getAuth(firebaseApp);
+
+  // Fetch real teachers (optional, but good for real flow)
+  useEffect(() => {
+    const fetchTeachers = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'teachers'));
+        const teachers = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        if (teachers.length > 0) {
+          setTeachersList(teachers);
+        }
+      } catch (e) {
+        console.error("Error fetching teachers", e);
+      }
+    };
+    fetchTeachers();
+  }, [db]);
+
+  const handleInviteTeacher = async (e) => {
+    e.preventDefault();
+    setIsInviting(true);
+    try {
+      // 1. Create Teacher Auth Account with a temporary password
+      const tempPassword = Math.random().toString(36).slice(-8);
+      await createUserWithEmailAndPassword(auth, newTeacher.email, tempPassword);
+      
+      // 2. Save Teacher to Firestore
+      const docRef = await addDoc(collection(db, 'teachers'), {
+        name: newTeacher.name,
+        email: newTeacher.email,
+        subject: newTeacher.subject,
+        status: 'Active',
+        role: 'teacher'
+      });
+
+      // 3. Update local state
+      setTeachersList([...teachersList, { id: docRef.id, ...newTeacher, status: 'Active' }]);
+      
+      // In a real app, you would send an email here with the temp password.
+      alert(`Teacher created successfully!\nEmail: ${newTeacher.email}\nTemp Password: ${tempPassword}\nPlease share this securely with the teacher.`);
+      
+      setNewTeacher({ name: '', email: '', subject: '' });
+      setShowInviteModal(false);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to invite teacher: ' + err.message);
+    } finally {
+      setIsInviting(false);
+    }
+  };
 
   // Dummy Data for the UI
   const schoolStats = {
     totalStudents: 1250,
-    activeTeachers: 45,
+    activeTeachers: teachersList.length,
     averageProgress: 72,
     atRiskStudents: 85
   };
-
-  const teachersList = [
-    { id: 1, name: 'Sarah Jenkins', subject: 'Mathematics', grade: '10th', status: 'Active' },
-    { id: 2, name: 'Marcus Cole', subject: 'History', grade: '9th', status: 'Active' },
-    { id: 3, name: 'Elena Rodriguez', subject: 'Science', grade: '11th', status: 'Pending' },
-  ];
 
   return (
     <div className="main-content">
@@ -73,28 +129,54 @@ export const SuperadminDashboard = () => {
         <div className="card" style={{ padding: '2rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
             <h2>Teacher Directory</h2>
-            <button className="btn btn-primary"><UserPlus size={18}/> Invite Teacher</button>
+            <button className="btn btn-primary" onClick={() => setShowInviteModal(true)}>
+              <UserPlus size={18}/> Invite Teacher
+            </button>
           </div>
+
+          {showInviteModal && (
+            <div style={{ marginBottom: '2rem', padding: '1.5rem', background: 'var(--color-background)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)' }}>
+              <h3>Invite New Teacher</h3>
+              <form onSubmit={handleInviteTeacher} style={{ display: 'flex', gap: '1rem', marginTop: '1rem', alignItems: 'flex-end' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>Name</label>
+                  <input type="text" className="form-input" required value={newTeacher.name} onChange={(e) => setNewTeacher({...newTeacher, name: e.target.value})} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>Email</label>
+                  <input type="email" className="form-input" required value={newTeacher.email} onChange={(e) => setNewTeacher({...newTeacher, email: e.target.value})} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>Subject</label>
+                  <input type="text" className="form-input" required value={newTeacher.subject} onChange={(e) => setNewTeacher({...newTeacher, subject: e.target.value})} />
+                </div>
+                <button type="submit" className="btn btn-primary" disabled={isInviting}>
+                  {isInviting ? 'Inviting...' : 'Send Invite'}
+                </button>
+                <button type="button" className="btn btn-outline" onClick={() => setShowInviteModal(false)}>Cancel</button>
+              </form>
+            </div>
+          )}
           
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
               <tr style={{ borderBottom: '2px solid var(--color-border)' }}>
                 <th style={{ padding: '1rem' }}>Name</th>
+                <th style={{ padding: '1rem' }}>Email</th>
                 <th style={{ padding: '1rem' }}>Subject</th>
-                <th style={{ padding: '1rem' }}>Grade Assigned</th>
                 <th style={{ padding: '1rem' }}>Status</th>
                 <th style={{ padding: '1rem' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {teachersList.map(teacher => (
-                <tr key={teacher.id} style={{ borderBottom: '1px solid var(--color-border)' }}>
+              {teachersList.map((teacher, index) => (
+                <tr key={teacher.id || index} style={{ borderBottom: '1px solid var(--color-border)' }}>
                   <td style={{ padding: '1rem', fontWeight: '500' }}>{teacher.name}</td>
+                  <td style={{ padding: '1rem' }}>{teacher.email}</td>
                   <td style={{ padding: '1rem' }}>{teacher.subject}</td>
-                  <td style={{ padding: '1rem' }}>{teacher.grade}</td>
                   <td style={{ padding: '1rem' }}>
                     <span className={teacher.status === 'Active' ? 'status-badge status-green' : 'status-badge status-yellow'}>
-                      {teacher.status}
+                      {teacher.status || 'Active'}
                     </span>
                   </td>
                   <td style={{ padding: '1rem' }}>

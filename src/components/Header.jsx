@@ -14,18 +14,22 @@ export const Header = () => {
   };
 
   return (
-    <header className="app-header" style={{
+    <header className="app-header animate-fade" style={{
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
       padding: '0.75rem 2rem',
-      background: 'var(--color-surface)',
+      background: 'rgba(255, 255, 255, 0.8)',
+      backdropFilter: 'blur(12px)',
+      WebkitBackdropFilter: 'blur(12px)',
       color: 'var(--color-text-main)',
-      boxShadow: 'var(--shadow-sm)',
-      borderBottom: '1px solid var(--color-border)',
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.05)',
+      border: '1px solid rgba(255, 255, 255, 0.3)',
+      borderRadius: '20px',
       position: 'sticky',
-      top: 0,
-      zIndex: 100
+      top: '1rem',
+      margin: '0 1rem',
+      zIndex: 1000
     }}>
       <div className="logo-container" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         <img src={logo} alt="PACE" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />

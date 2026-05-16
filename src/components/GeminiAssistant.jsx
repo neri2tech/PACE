@@ -158,18 +158,19 @@ export const GeminiAssistant = () => {
             />
             <button
               type="submit"
+              disabled={isTyping}
               style={{
-                background: 'var(--color-secondary)',
+                background: isTyping ? '#cbd5e1' : 'var(--color-secondary)',
                 color: 'white',
                 border: 'none',
                 width: '40px',
-                height: '400px',
-                maxHeight: '40px',
+                height: '40px',
                 borderRadius: '10px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                cursor: 'pointer'
+                cursor: isTyping ? 'not-allowed' : 'pointer',
+                transition: 'all 0.2s'
               }}
             >
               <Send size={18} />

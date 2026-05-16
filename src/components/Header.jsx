@@ -1,12 +1,28 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogOut } from 'lucide-react';
+import { LogOut, School as SchoolIcon } from 'lucide-react';
 import logo from '../assets/logo.png';
+import { db } from '../firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 export const Header = () => {
   const { user, role, logout } = useAuth();
+  const [schoolName, setSchoolName] = React.useState('PACE Academy');
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    const fetchSchool = async () => {
+      if (user?.uid) {
+        const docRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(docRef);
+        if (userDoc.exists() && userDoc.data().schoolName) {
+          setSchoolName(userDoc.data().schoolName);
+        }
+      }
+    };
+    fetchSchool();
+  }, [user]);
 
   const handleLogout = async () => {
     await logout();
@@ -31,18 +47,30 @@ export const Header = () => {
       margin: '0 1rem',
       zIndex: 1000
     }}>
-      <div className="logo-container" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <img src={logo} alt="PACE" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
-        <div className="logo" style={{ 
-          fontSize: '1.5rem', 
-          fontWeight: '800', 
-          fontFamily: 'Outfit, sans-serif',
-          background: 'var(--gradient-brand)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          letterSpacing: '-0.02em'
-        }}>
-          PACE
+      <div className="logo-container" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', borderRight: '1px solid var(--color-border)', paddingRight: '1.25rem' }}>
+          <img src={logo} alt="PACE" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+          <div className="logo" style={{ 
+            fontSize: '1.5rem', 
+            fontWeight: '800', 
+            fontFamily: 'Outfit, sans-serif',
+            background: 'var(--gradient-brand)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            letterSpacing: '-0.02em'
+          }}>
+            PACE
+          </div>
+        </div>
+        
+        {/* School Name Banner */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ background: 'var(--color-bg)', padding: '0.4rem', borderRadius: '8px' }}>
+            <SchoolIcon size={18} color="var(--color-primary)" />
+          </div>
+          <div style={{ fontWeight: '700', fontSize: '1rem', color: 'var(--color-text-main)', letterSpacing: '-0.01em' }}>
+            {schoolName}
+          </div>
         </div>
       </div>
       

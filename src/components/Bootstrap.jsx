@@ -16,7 +16,7 @@ export const Bootstrap = () => {
     setStatus('Repairing session...');
     try {
       const uid = auth.currentUser.uid;
-      const role = localStorage.getItem('role') || 'superadmin'; 
+      const role = localStorage.getItem('pace_role') || 'superadmin'; 
       await setDoc(doc(db, "users", uid), {
         email: auth.currentUser.email,
         role: role,
@@ -25,7 +25,7 @@ export const Bootstrap = () => {
         createdAt: new Date().toISOString()
       }, { merge: true });
       
-      localStorage.setItem('role', role);
+      localStorage.setItem('pace_role', role);
       setStatus(`SUCCESS: Session repaired! Redirecting to ${role} dashboard...`);
       setTimeout(() => window.location.href = `/${role}`, 2000);
     } catch (error) {

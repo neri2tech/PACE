@@ -50,39 +50,52 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
-      setUser(u);
-      if (u) {
-        // Fetch role from Firestore
-        const userDoc = await getDoc(doc(db, 'users', u.uid));
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          setRole(userData.role);
-          localStorage.setItem('role', userData.role);
+      try {
+        setUser(u);
+        if (u) {
+          // Fetch role from Firestore
+          const userDoc = await getDoc(doc(db, 'users', u.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            setRole(userData.role);
+            localStorage.setItem('role', userData.role);
+          } else {
+            // Fallback if not in Firestore
+            const stored = localStorage.getItem('role');
+            setRole(stored);
+          }
         } else {
-          // Fallback if not in Firestore
-          const stored = localStorage.getItem('role');
-          setRole(stored);
+          setRole(null);
+          localStorage.removeItem('role');
         }
-      } else {
-        setRole(null);
-        localStorage.removeItem('role');
+      } catch (err) {
+        console.error("Auth state error (using fallback):", err);
+        // On error, try to keep the existing role from localStorage if available
+        const stored = localStorage.getItem('role');
+        if (stored) setRole(stored);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
     return () => unsub();
   }, [auth]);
 
   const login = async (email, password) => {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const u = userCredential.user;
-    const userDoc = await getDoc(doc(db, 'users', u.uid));
-    if (userDoc.exists()) {
-      const userData = userDoc.data();
-      setRole(userData.role);
-      localStorage.setItem('role', userData.role);
-      return userData.role;
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const u = userCredential.user;
+      const userDoc = await getDoc(doc(db, 'users', u.uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        setRole(userData.role);
+        localStorage.setItem('role', userData.role);
+        return userData.role;
+      }
+      return null;
+    } catch (error) {
+      console.error("Login error:", error);
+      throw error;
     }
-    return null;
   };
 
   const register = async (email, password, chosenRole, additionalData = {}) => {

@@ -59,8 +59,12 @@ const PrivateRoute = ({ children, allowedRoles }) => {
   if (loading) return <LoadingScreen />;
   if (!user) return <Navigate to="/login" replace />;
   if (role && !allowedRoles.includes(role)) return <Navigate to={`/${role}`} replace />;
-  // If role is briefly null but user is authenticated, show loading
-  if (!role) return <LoadingScreen />;
+  
+  // If role is missing, redirect to bootstrap
+  if (!role) {
+    return <Navigate to="/bootstrap" replace />;
+  }
+  
   return children;
 };
 
@@ -116,7 +120,13 @@ const RequireAuthRedirect = () => {
   const { user, role, loading } = useAuth();
   if (loading) return <LoadingScreen />;
   if (!user) return <Navigate to="/login" replace />;
-  if (!role) return <LoadingScreen />;
+  
+  // If role is missing, redirect to bootstrap to re-sync account
+  if (!role) {
+    console.warn("[Auth] No role found, redirecting to bootstrap");
+    return <Navigate to="/bootstrap" replace />;
+  }
+  
   return <Navigate to={`/${role}`} replace />;
 };
 

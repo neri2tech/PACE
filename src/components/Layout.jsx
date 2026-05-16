@@ -8,7 +8,7 @@ export const Layout = ({ children }) => (
     <Header />
     <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
       <Sidebar />
-      <main style={{ flex: 1, overflowY: 'auto', padding: '2rem', background: 'var(--color-bg)' }}>
+      <main style={{ flex: 1, overflowY: 'auto', padding: '2rem', background: 'var(--color-background)' }}>
         {children}
       </main>
     </div>

@@ -3,6 +3,7 @@ import { Activity, TrendingUp, BookOpen, Target } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { SuperadminDashboard } from './SuperadminDashboard';
 import { TeacherDashboard } from './TeacherDashboardComponents';
+import { Auth } from './Auth';
 
 export { SuperadminDashboard };
 export { TeacherDashboard };

@@ -1,16 +1,55 @@
-# React + Vite
+# PACE: Progress & Academic Completion Engine
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+PACE is a high-performance, real-time academic tracking platform designed to drive student excellence. It empowers educators with real-time analytics, automated intervention triggers, and a unified command center for institutional management.
 
-Currently, two official plugins are available:
+## 🚀 Core Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Real-time Heatmaps**: Instant visibility into student performance categories (On Track, Slowing Down, Stagnant).
+- **Automated Interventions**: Seamlessly push learning resources and personalized notes to students based on performance data.
+- **Institutional Branding**: Fully customizable dashboard banners for school identity.
+- **Multi-Role Access Control**: Tailored experiences for Superadmins, Teachers, and Students.
+- **AI-Powered Insights**: Integrated Gemini AI assistant for platform navigation and educational support.
 
-## React Compiler
+## 🛠 Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**: React.js + Vite (for lightning-fast HMR and build times).
+- **Styling**: Vanilla CSS with a custom modern design system (Glassmorphism, Vibrant Gradients).
+- **Backend/DB**: Firebase (Auth, Firestore, Storage).
+- **AI**: Google Gemini API integration.
 
-## Expanding the ESLint configuration
+## 🏃 Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Prerequisites
+
+- Node.js (v18+)
+- Firebase Account & Project
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/neri2tech/PACE.git
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Configure Environment Variables:
+   Create a `.env` file and add your Firebase and Gemini API keys.
+
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+## 🔐 Security & Roles
+
+- **Superadmin**: Full institutional control, branding settings, and teacher management.
+- **Teacher**: Command center for student performance tracking and interventions.
+- **Student**: Personalized portal for progress tracking and accessing assigned resources.
+
+---
+Built with ❤️ for Educational Excellence.
+

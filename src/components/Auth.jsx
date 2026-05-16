@@ -18,7 +18,7 @@ export const Auth = () => {
   const [selectedRole, setSelectedRole] = useState('superadmin');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 const navigate = useNavigate();
 
   // Handle Remember Me on mount
@@ -57,14 +57,14 @@ const navigate = useNavigate();
     }
     setError('');
     setSuccess('');
-    setLoading(true);
+    setIsProcessing(true);
     try {
       await resetPassword(email);
       setSuccess('Check your inbox! We\'ve sent a password reset link.');
     } catch (err) {
       setError(getFriendlyErrorMessage(err));
     } finally {
-      setLoading(false);
+      setIsProcessing(false);
     }
   };
 
@@ -72,7 +72,7 @@ const navigate = useNavigate();
     e.preventDefault();
     setError('');
     setSuccess('');
-    setLoading(true);
+    setIsProcessing(true);
 
     // Save/Clear email for Remember Me
     if (rememberMe) {
@@ -100,7 +100,7 @@ const navigate = useNavigate();
       console.error('Auth Error:', err);
       setError(getFriendlyErrorMessage(err));
     } finally {
-      setLoading(false);
+      setIsProcessing(false);
     }
   };
 
@@ -281,8 +281,8 @@ const navigate = useNavigate();
             {error && <div className="animate-shake" style={{ padding: '0.75rem', background: '#FEF2F2', color: '#B91C1C', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '500', border: '1px solid #FCA5A5' }}>{error}</div>}
             {success && <div style={{ padding: '0.75rem', background: '#F0FDF4', color: '#15803D', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '500', border: '1px solid #86EFAC' }}>{success}</div>}
 
-            <button type="submit" disabled={loading} className="btn btn-primary" style={{ width: '100%', padding: '1rem', borderRadius: '12px', background: 'var(--gradient-brand)', fontSize: '1rem', fontWeight: '700', boxShadow: '0 4px 12px rgba(0, 209, 193, 0.2)', marginTop: '0.5rem' }}>
-              {loading ? 'Processing...' : isLogin ? 'Sign Into Dashboard' : 'Create My Account'}
+            <button type="submit" disabled={isProcessing} className="btn btn-primary" style={{ width: '100%', padding: '1rem', borderRadius: '12px', background: 'var(--gradient-brand)', fontSize: '1rem', fontWeight: '700', boxShadow: '0 4px 12px rgba(0, 209, 193, 0.2)', marginTop: '0.5rem' }}>
+              {isProcessing ? 'Processing...' : isLogin ? 'Sign Into Dashboard' : 'Create My Account'}
             </button>
           </form>
 

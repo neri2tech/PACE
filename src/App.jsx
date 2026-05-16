@@ -71,14 +71,14 @@ const PrivateRoute = ({ children, allowedRoles }) => {
 function App() {
   React.useEffect(() => {
     // Only clear non-auth data; don't wipe role on version bump
-    const APP_VERSION = '1.0.2';
+    const APP_VERSION = '1.0.3';
     const currentVersion = localStorage.getItem('pace_version');
     if (currentVersion !== APP_VERSION) {
-      const role = localStorage.getItem('role'); // preserve role
+      const role = localStorage.getItem('pace_role'); // preserve role
       localStorage.clear();
-      if (role) localStorage.setItem('role', role); // restore role
+      if (role) localStorage.setItem('pace_role', role); // restore role
       localStorage.setItem('pace_version', APP_VERSION);
-      console.log('App updated: Cache cleared (role preserved)');
+      console.log('App updated: Cache cleared (pace_role preserved)');
     }
   }, []);
 

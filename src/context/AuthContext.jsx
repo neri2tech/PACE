@@ -5,7 +5,8 @@ import {
   signOut, 
   onAuthStateChanged,
   GoogleAuthProvider,
-  signInWithPopup 
+  signInWithPopup,
+  sendPasswordResetEmail
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
@@ -16,6 +17,10 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(localStorage.getItem('role') || null);
   const [loading, setLoading] = useState(true);
+
+  const resetPassword = (email) => {
+    return sendPasswordResetEmail(auth, email);
+  };
 
   const loginWithGoogle = async (defaultRole = 'teacher') => {
     const provider = new GoogleAuthProvider();
@@ -122,7 +127,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, role, loading, login, register, logout, loginWithGoogle }}>
+    <AuthContext.Provider value={{ user, role, loading, login, register, logout, loginWithGoogle, resetPassword }}>
       {!loading && children}
     </AuthContext.Provider>
   );

@@ -22,10 +22,11 @@ FROM nginx:alpine
 # Copy the build output from the builder stage to Nginx's html directory
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Expose port 80 (required by Cloud Run)
-EXPOSE 80
+# Copy custom nginx configuration for SPA routing
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Cloud Run sets the PORT environment variable to 8080 by default, 
-# so we need to configure Nginx to listen on the correct port.
-# We replace the default listen port 80 with $PORT in the default.conf
-CMD sed -i -e 's/80/8080/g' /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'
+# Expose port 8080 (standard for Cloud Run)
+EXPOSE 8080
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]

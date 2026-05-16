@@ -1,31 +1,41 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap');
 
 :root {
-  /* Insight Scholar Theme - Color Palette */
-  --color-primary: #0A2540;      /* Deep Navy */
+  /* PACE Branding System - Color Palette */
+  --color-primary: #0A2540;      /* Deep Navy - Stability */
   --color-primary-light: #1A3E63;
-  --color-secondary: #0070F3;    /* Bright Blue */
-  --color-background: #F8FAFC;   /* Very Light Gray/Blue */
+  --color-secondary: #00D1C1;    /* Vibrant Teal - Growth */
+  --color-secondary-light: #33DACD;
+  --color-accent: #6366F1;       /* Indigo - Modernity */
+  
+  --color-background: #F0F4F8;   /* Soft Cool Gray */
   --color-surface: #FFFFFF;
-  --color-text-main: #111827;    /* Almost Black */
-  --color-text-muted: #6B7280;   /* Gray */
-  --color-border: #E5E7EB;
+  --color-text-main: #1A202C;    /* Slate Black */
+  --color-text-secondary: #4A5568; /* Slate Gray */
+  --color-text-muted: #718096;
+  --color-border: #E2E8F0;
 
   /* Status Colors */
-  --color-status-green: #10B981; /* On Track */
-  --color-status-yellow: #F59E0B; /* Slowing Down */
-  --color-status-red: #EF4444;    /* Stagnant */
-  --color-status-gray: #9CA3AF;   /* Not Started */
+  --color-status-green: #10B981; 
+  --color-status-yellow: #F59E0B; 
+  --color-status-red: #EF4444;    
+  --color-status-gray: #9CA3AF;   
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  /* Design Tokens */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+  --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  --shadow-premium: 0 20px 40px rgba(0, 0, 0, 0.08);
 
-  /* Border Radius */
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
   --radius-full: 9999px;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  --gradient-brand: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  --gradient-accent: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-accent) 100%);
 }
 
 * {
@@ -44,9 +54,11 @@ body {
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', sans-serif;
   color: var(--color-primary);
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
 }
 
 a {

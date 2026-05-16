@@ -57,9 +57,4 @@ export const StudentDashboard = () => (
   </div>
 );
 
-export const Login = () => (
-  <div className="main-content">
-    <h1>PACE Login</h1>
-    <p>Please select your role to continue.</p>
-  </div>
-);
+export { Auth as Login } from './Auth';

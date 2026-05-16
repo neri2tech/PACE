@@ -1,27 +1,36 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { BarChart3, Users, BookOpen, Settings } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export const Sidebar = () => {
+  const { role } = useAuth();
+
   return (
     <aside className="sidebar" style={sidebarStyle}>
       <nav>
         <ul style={ulStyle}>
-          <li>
-            <NavLink to="/superadmin" style={linkStyle} activeStyle={activeLinkStyle}>
-              <BarChart3 size={18} /> Superadmin
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/teacher" style={linkStyle} activeStyle={activeLinkStyle}>
-              <Users size={18} /> Teacher
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/student" style={linkStyle} activeStyle={activeLinkStyle}>
-              <BookOpen size={18} /> Student
-            </NavLink>
-          </li>
+          {role === 'superadmin' && (
+            <li>
+              <NavLink to="/superadmin" style={linkStyle} activeStyle={activeLinkStyle}>
+                <BarChart3 size={18} /> Superadmin
+              </NavLink>
+            </li>
+          )}
+          {role === 'teacher' && (
+            <li>
+              <NavLink to="/teacher" style={linkStyle} activeStyle={activeLinkStyle}>
+                <Users size={18} /> Teacher Dashboard
+              </NavLink>
+            </li>
+          )}
+          {role === 'student' && (
+            <li>
+              <NavLink to="/student" style={linkStyle} activeStyle={activeLinkStyle}>
+                <BookOpen size={18} /> My Portal
+              </NavLink>
+            </li>
+          )}
           <li>
             <NavLink to="/settings" style={linkStyle} activeStyle={activeLinkStyle}>
               <Settings size={18} /> Settings

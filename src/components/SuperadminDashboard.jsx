@@ -3,6 +3,7 @@ import { Users, School, BarChart3, Settings, UserPlus, BookOpen } from 'lucide-r
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, collection, addDoc, getDocs } from 'firebase/firestore';
 import { firebaseApp } from '../firebase';
+import { StudentRegistration } from './StudentRegistration'; // Imported here
 
 export const SuperadminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -95,9 +96,9 @@ export const SuperadminDashboard = () => {
           onClick={() => setActiveTab('teachers')}
         ><Users size={18}/> Teacher Management</button>
         <button 
-          className={activeTab === 'classes' ? 'btn btn-primary' : 'btn btn-outline'}
-          onClick={() => setActiveTab('classes')}
-        ><BookOpen size={18}/> Class Management</button>
+          className={activeTab === 'students' ? 'btn btn-primary' : 'btn btn-outline'}
+          onClick={() => setActiveTab('students')}
+        ><BookOpen size={18}/> Student Management</button>
       </div>
 
       {/* Content Area */}
@@ -189,17 +190,8 @@ export const SuperadminDashboard = () => {
         </div>
       )}
 
-      {activeTab === 'classes' && (
-        <div className="card">
-          <h2>Class Configuration</h2>
-          <p style={{ color: 'var(--color-text-muted)' }}>Map teachers to class rosters here. Use bulk import for rapid setup.</p>
-          <div style={{ marginTop: '1.5rem', padding: '2rem', border: '2px dashed var(--color-border)', borderRadius: 'var(--radius-lg)', textAlign: 'center' }}>
-            <School size={48} style={{ color: 'var(--color-text-muted)', marginBottom: '1rem' }} />
-            <h3>Upload Global Master Roster</h3>
-            <p style={{ color: 'var(--color-text-muted)', marginBottom: '1rem' }}>Import a school-wide CSV to auto-generate classes and assign teachers.</p>
-            <button className="btn btn-primary">Select CSV File</button>
-          </div>
-        </div>
+      {activeTab === 'students' && (
+        <StudentRegistration />
       )}
     </div>
   );

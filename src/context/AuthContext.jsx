@@ -54,24 +54,33 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (u) => {
-      try {
-        setUser(u);
-        if (u) {
-          // Fetch role from Firestore
-          const userDoc = await getDoc(doc(db, 'users', u.uid));
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+      
+      if (currentUser) {
+        // Set a timeout to prevent infinite white screen if Firestore hangs
+        const roleTimeout = setTimeout(() => {
+          if (loading) {
+            console.warn('Role fetch timed out, defaulting to fallback');
+            setLoading(false);
+          }
+        }, 8000); // 8 second fail-safe
+
+        try {
+          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
           if (userDoc.exists()) {
             const userData = userDoc.data();
             setRole(userData.role);
             localStorage.setItem('role', userData.role);
           } else {
-            // Fallback if not in Firestore
             const stored = localStorage.getItem('role');
             setRole(stored);
           }
-        } else {
-          setRole(null);
-          localStorage.removeItem('role');
+        } catch (error) {
+          console.error("Error fetching user role:", error);
+        } finally {
+          clearTimeout(roleTimeout);
+          setLoading(false);
         }
       } catch (err) {
         console.error("Auth state error (using fallback):", err);

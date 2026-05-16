@@ -18,6 +18,7 @@ export const Auth = () => {
   const [selectedRole, setSelectedRole] = useState('superadmin');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 const navigate = useNavigate();
 
   // Handle Remember Me on mount

@@ -70,6 +70,12 @@ export const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
       if (u) {
+        // Cache-first approach for zero-lag UI
+        const cached = localStorage.getItem('pace_role');
+        if (cached) {
+          setRole(cached);
+          setLoading(false);
+        }
         fetchRole(u);
       } else {
         setRole(null);

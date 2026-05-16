@@ -1,53 +1,76 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signOut, 
   onAuthStateChanged,
+  sendPasswordResetEmail,
   GoogleAuthProvider,
-  signInWithPopup,
-  sendPasswordResetEmail
+  signInWithPopup
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
+
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [role, setRole] = useState(localStorage.getItem('role') || null);
+  const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const resetPassword = (email) => {
-    return sendPasswordResetEmail(auth, email);
+  const resetPassword = async (email) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+      throw error;
+    }
   };
 
-  const loginWithGoogle = async (defaultRole = 'teacher') => {
-    const provider = new GoogleAuthProvider();
+  const loginWithGoogle = async (selectedRole) => {
     try {
+      const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const u = result.user;
       
-      // Check if user already has a role
+      // Check if user exists in Firestore
       const userDoc = await getDoc(doc(db, 'users', u.uid));
-      
-      if (userDoc.exists()) {
-        const existingRole = userDoc.data().role;
-        setRole(existingRole);
-        localStorage.setItem('role', existingRole);
-        return existingRole;
-      } else {
-        // New user from Google - assign default role (or we can prompt later)
+      if (!userDoc.exists()) {
+        // Create user with selected role if new
         await setDoc(doc(db, 'users', u.uid), {
           email: u.email,
-          name: u.displayName,
-          role: defaultRole,
+          role: selectedRole,
+          firstName: u.displayName?.split(' ')[0] || '',
+          lastName: u.displayName?.split(' ')[1] || '',
           createdAt: new Date().toISOString()
         });
-        setRole(defaultRole);
-        localStorage.setItem('role', defaultRole);
-        return defaultRole;
+        setRole(selectedRole);
+        return selectedRole;
+      } else {
+        const r = userDoc.data().role;
+        setRole(r);
+        return r;
       }
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const register = async (email, password, selectedRole, additionalData) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const u = userCredential.user;
+      
+      await setDoc(doc(db, 'users', u.uid), {
+        email,
+        role: selectedRole,
+        ...additionalData,
+        createdAt: new Date().toISOString()
+      });
+      
+      setRole(selectedRole);
+      return selectedRole;
     } catch (error) {
       throw error;
     }
@@ -78,68 +101,58 @@ export const AuthProvider = ({ children }) => {
           }
         } catch (error) {
           console.error("Error fetching user role:", error);
+          const stored = localStorage.getItem('role');
+          if (stored) setRole(stored);
         } finally {
           clearTimeout(roleTimeout);
           setLoading(false);
         }
-      } catch (err) {
-        console.error("Auth state error (using fallback):", err);
-        // On error, try to keep the existing role from localStorage if available
-        const stored = localStorage.getItem('role');
-        if (stored) setRole(stored);
-      } finally {
+      } else {
+        setRole(null);
+        localStorage.removeItem('role');
         setLoading(false);
       }
     });
-    return () => unsub();
+    return () => unsubscribe();
   }, [auth]);
 
   const login = async (email, password) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const u = userCredential.user;
+      
       const userDoc = await getDoc(doc(db, 'users', u.uid));
       if (userDoc.exists()) {
-        const userData = userDoc.data();
-        setRole(userData.role);
-        localStorage.setItem('role', userData.role);
-        return userData.role;
+        const r = userDoc.data().role;
+        setRole(r);
+        return r;
       }
       return null;
     } catch (error) {
-      console.error("Login error:", error);
       throw error;
     }
   };
 
-  const register = async (email, password, chosenRole, additionalData = {}) => {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const u = userCredential.user;
-    
-    // Create user document in Firestore
-    await setDoc(doc(db, 'users', u.uid), {
-      email,
-      role: chosenRole,
-      createdAt: new Date().toISOString(),
-      ...additionalData
-    });
-    
-    setRole(chosenRole);
-    localStorage.setItem('role', chosenRole);
-    return chosenRole;
+  const logout = () => {
+    setRole(null);
+    localStorage.removeItem('role');
+    return signOut(auth);
   };
 
-  const logout = async () => {
-    await signOut(auth);
-    localStorage.removeItem('role');
-    setRole(null);
+  const value = {
+    user,
+    role,
+    loading,
+    login,
+    register,
+    logout,
+    resetPassword,
+    loginWithGoogle
   };
 
   return (
-    <AuthContext.Provider value={{ user, role, loading, login, register, logout, loginWithGoogle, resetPassword }}>
-      {!loading && children}
+    <AuthContext.Provider value={value}>
+      {children}
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => useContext(AuthContext);

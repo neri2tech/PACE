@@ -3,8 +3,8 @@ import { useAuth } from '../context/AuthContext';
 import { Users, Lock, Mail, UserPlus, LogIn, School, BookOpen, Eye, EyeOff, CheckCircle, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
-import bg1 from '../assets/auth-bg-1.jpg';
-import bg2 from '../assets/auth-bg-2.jpg';
+import bg1 from '../assets/auth-bg-1.png';
+import bg2 from '../assets/auth-bg-2.png';
 
 export const Auth = () => {
   const { login, register, user, loginWithGoogle, resetPassword, loading: authLoading } = useAuth();

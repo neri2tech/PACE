@@ -6,7 +6,7 @@ import logo from '../assets/logo.png';
 import authBg from '../assets/auth-bg.png';
 
 export const Auth = () => {
-  const { login, register, user, loginWithGoogle, resetPassword } = useAuth();
+  const { login, register, user, loginWithGoogle, resetPassword, loading: authLoading } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -103,6 +103,16 @@ const navigate = useNavigate();
       setIsProcessing(false);
     }
   };
+
+  if (authLoading) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#0a2f38' }}>
+        <div style={{ width: '48px', height: '48px', borderRadius: '50%', border: '4px solid rgba(255,255,255,0.1)', borderTopColor: 'var(--color-secondary)', animation: 'spin 0.8s linear infinite' }} />
+        <p style={{ marginTop: '1rem', color: 'white', opacity: 0.8, fontWeight: '500' }}>Verifying your session...</p>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
 
   if (user) return null;
 

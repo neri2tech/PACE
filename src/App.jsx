@@ -1,60 +1,72 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { SuperadminDashboard, TeacherDashboard, StudentDashboard, Login } from './components/Dashboards';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { Layout } from './components/Layout';
 
-// Dummy Auth Context/Provider for initial scaffolding
-const isAuthenticated = true;
-const userRole = 'teacher'; // 'superadmin', 'teacher', 'student'
-
+// PrivateRoute now reads auth state from context
 const PrivateRoute = ({ children, allowedRoles }) => {
-  if (!isAuthenticated) return <Navigate to="/login" />;
-  if (allowedRoles && !allowedRoles.includes(userRole)) return <Navigate to="/unauthorized" />;
+  const { user, role } = useAuth();
+  if (!user) return <Navigate to="/login" replace />;
+  if (!allowedRoles.includes(role)) return <Navigate to="/unauthorized" replace />;
   return children;
 };
 
 function App() {
   return (
-    <Router>
-      <div className="app-container">
+    <AuthProvider>
+      <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
-          
-          {/* Superadmin Routes */}
-          <Route 
-            path="/superadmin/*" 
+          {/* Protected routes – wrapped in Layout for header+sidebar */}
+          <Route
+            path="/superadmin/*"
             element={
-              <PrivateRoute allowedRoles={['superadmin']}>
-                <SuperadminDashboard />
+              <PrivateRoute allowedRoles={["superadmin"]}>
+                <Layout>
+                  <SuperadminDashboard />
+                </Layout>
               </PrivateRoute>
-            } 
+            }
           />
-
-          {/* Teacher Routes */}
-          <Route 
-            path="/teacher/*" 
+          <Route
+            path="/teacher/*"
             element={
-              <PrivateRoute allowedRoles={['teacher']}>
-                <TeacherDashboard />
+              <PrivateRoute allowedRoles={["teacher"]}>
+                <Layout>
+                  <TeacherDashboard />
+                </Layout>
               </PrivateRoute>
-            } 
+            }
           />
-
-          {/* Student Routes */}
-          <Route 
-            path="/student/*" 
+          <Route
+            path="/student/*"
             element={
-              <PrivateRoute allowedRoles={['student']}>
-                <StudentDashboard />
+              <PrivateRoute allowedRoles={["student"]}>
+                <Layout>
+                  <StudentDashboard />
+                </Layout>
               </PrivateRoute>
-            } 
+            }
           />
-
-          {/* Default Route */}
-          <Route path="/" element={<Navigate to={`/${userRole}`} />} />
+          {/* Default – redirect based on role if logged in */}
+          <Route
+            path="/"
+            element={
+              <RequireAuthRedirect />
+            }
+          />
         </Routes>
-      </div>
-    </Router>
+      </Router>
+    </AuthProvider>
   );
 }
+
+// Helper component to redirect root based on current role
+const RequireAuthRedirect = () => {
+  const { user, role } = useAuth();
+  if (!user) return <Navigate to="/login" replace />;
+  return <Navigate to={`/${role}`} replace />;
+};
 
 export default App;

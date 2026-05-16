@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { SuperadminDashboard, TeacherDashboard, StudentDashboard, Login } from './components/Dashboards';
+import { Bootstrap } from './components/Bootstrap';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Layout } from './components/Layout';
 
@@ -18,6 +19,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/bootstrap" element={<Bootstrap />} />
           {/* Protected routes – wrapped in Layout for header+sidebar */}
           <Route
             path="/superadmin/*"
